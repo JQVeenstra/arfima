@@ -1,0 +1,15 @@
+citHeader("To cite arfima in publications use:")
+
+citEntry(entry = "PhdThesis",
+  title        = "Persistence and Anti-persistence: Theory and Software",
+  author       = as.person("Justin Q. Veenstra"),
+  school = 	 "Western University",
+  year = 	 "2012",
+  textVersion  =
+  paste("Justin Veenstra",
+        "Persistence and Anti-persistence: Theory and Sofware",
+        "Ph.D. Thesis, Western University. 2012.")
+)
+
+
+

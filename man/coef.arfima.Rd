@@ -1,0 +1,50 @@
+\name{coef.arfima}
+\alias{coef.arfima}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{
+Extract Model Coefficients
+}
+\description{
+Extracts the coefficients from a \code{arfima} fit.
+}
+\usage{
+\method{coef}{arfima}(object, tpacf = FALSE,
+digits = max(4, getOption("digits") - 3), ...)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{object}{
+A fitted \code{arfima} object.
+}
+  \item{tpacf}{
+If \code{TRUE}, the (ARMA) coefficients are in the transformed PACF space. 
+}
+
+  \item{digits}{
+The number of digits to print
+}
+
+  \item{\dots}{
+Other optional arguments.  Currently not used. 
+}
+}
+
+\value{
+A matrix of coefficients.  The rows are for the modes, and the columns are for the model variables. 
+}
+
+\author{
+Justin Veenstra
+}
+
+\examples{
+\dontrun{
+set.seed(8564)
+sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
+fit <- arfima(sim, order = c(2, 0, 1))
+
+fit
+coef(fit)
+}
+}
+\keyword{ ts}

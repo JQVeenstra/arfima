@@ -1,0 +1,18 @@
+Package: arfima
+Version: 1.3-4
+Date: 2015-12-26
+Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
+Authors@R: c(person("Justin Q.", "Veenstra", role = c("aut", "cre"),
+		     email = "justin.veenstra@gmail.com"),
+	      person("A.I.", "McLeod", role = "aut"))
+Author: Justin Q. Veenstra [aut, cre],
+    A.I. McLeod [aut]
+Maintainer: Justin Q. Veenstra <justin.veenstra@gmail.com>
+Depends:
+    R (>= 2.14.0), ltsa
+Imports:
+    parallel
+Description: Simulates, fits, and predicts long-memory and anti-persistent time
+    series, possibly mixed with ARMA, regression, transfer-function components.
+    Exact methods (MLE, forecasting, simulation) are used.
+License: GPL (>= 2)

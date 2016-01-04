@@ -1,0 +1,91 @@
+\name{tmpyr}
+\alias{tmpyr}
+\docType{data}
+\title{ Temperature Data }
+\description{
+Central England mean yearly temperatures from 1659 to 1976
+}
+\usage{data(tmpyr)}
+\format{
+A ts tmpyr
+}
+
+\details{
+Hosking notes that while the ARFIMA(1, d, 1) has a lower AIC, it is not much lower than the AIC of the ARFIMA(1, d, 0).  
+
+Bhansali and Kobozka find: muHat = 9.14, d = 0.28, phi = -0.77, and theta = -0.66 for the ARFIMA(1, d, 1), which is close to our result, 
+although our result reveals trimodality if \code{numeach} is large enough.  The third mode is close to Hosking's fit of an ARMA(1, 1) to these data,
+while the second is very antipersistent.
+
+Our package gives a very close result to Hosking for the ARFIMA(1, d, 0) case, although there is also a second mode.  Given how 
+close it is to the boundary, it may or may not be spurious.  A check with \code{dmean = FALSE} shows that it is not the optimized
+mean giving a spurious mode.
+
+If, however, we use \code{whichopt = 1}, we only have one mode.  Note that Nelder-Mead sometimes does take out non-spurious modes, or add
+spurious modes to the surface.
+
+}
+\source{
+\url{http://www.metoffice.gov.uk/hadobs/hadcet/}
+}
+
+
+\references{
+Parker, D.E., Legg, T.P., and Folland, C.K. (1992). 
+A new daily Central England Temperature Series, 1772-1991. Int. J. Clim., Vol 12, pp 317-342 
+
+Manley,G. (1974). 
+Central England Temperatures: monthly means 1659 to 1973. Q.J.R. Meteorol. Soc., Vol 100, pp 389-405. 
+
+Hosking, J. R. M. (1984).
+Modeling persistence in hydrological time series using fractional differencing, Water Resour. Res., 20(12)
+
+
+Bhansali, R. J. and Koboszka, P. S. (2003)
+Prediction of Long-Memory Time Series 
+In Doukhan, P., Oppenheim, G. and Taqqu, M. S. (Eds)
+Theory and Applications of Long-Range Dependence (pp355-368)
+Birkhauser Boston Inc.
+
+Veenstra, J. and McLeod, A. I. (Working Paper).
+The arfima R package: Exact Methods for Hyperbolic Decay Time Series
+
+} 
+
+\examples{
+\dontrun{
+data(tmpyr)
+
+fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE)
+fit
+
+##suspect that fourth mode may be spurious, even though not close to a boundary
+##may be an induced mode from the optimization of the mean
+
+fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = FALSE)
+fit
+
+##perhaps so
+
+
+plot(tacvf(fit), maxlag = 30, tacf = TRUE)
+
+fit1 <- arfima(tmpyr, order = c(1, 0, 0), dmean = TRUE)
+fit1
+
+fit2 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE)
+fit2  ##still bimodal.  Second mode may or may not be spurious.
+
+fit3 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE, whichopt = 1, numeach = c(3, 3))
+fit3  ##Unimodal.  So the second mode was likely spurious.
+
+plot(tacvf(fit2), maxlag = 30, tacf = TRUE)
+##maybe not spurious.  Hard to tell without visualizing the surface.
+
+##compare to plotted tacf of fit1:  looks alike
+plot(tacvf(fit1), maxlag = 30, tacf = TRUE)
+
+tacfplot(list(fit1, fit2))
+}
+}
+\keyword{datasets}
