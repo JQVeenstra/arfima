@@ -10,7 +10,7 @@ getsigma2muhat <- function(z, phi = numeric(0), phiseas = numeric(0), theta = nu
     sigmasq <- numeric(n)
     error[1] <- z[1]
     sigmasq[1] <- r[1]
-    phee <- r[2]/r[1]
+    phee <- as.vector(r[2]/r[1])
     error[2] <- z[2] - phee * z[1]
     sigmasqkm1 <- r[1] * (1 - phee^2)
     sigmasq[2] <- sigmasqkm1
@@ -19,7 +19,7 @@ getsigma2muhat <- function(z, phi = numeric(0), phiseas = numeric(0), theta = nu
     for (k in 2:(n - 1)) {
         phikk <- (r[k + 1] - phee %*% rev(r[2:k]))/sigmasqkm1
         sigmasqk <- sigmasqkm1 * (1 - phikk^2)
-        phinew <- phee - phikk * rev(phee)
+        phinew <- phee - as.vector(phikk) * rev(phee)
         phee <- c(phinew, phikk)
         sigmasqkm1 <- sigmasqk
         g <- g * sigmasqk

@@ -1,3 +1,28 @@
+#' Exact MLE for ARFIMA
+#' 
+#' The time series is corrected for the sample mean and then exact MLE is used
+#' for the other parameters. This is a simplified version of the arfima()
+#' function that may be useful in simulations and bootstrapping.
+#' 
+#' The sample mean is asymptotically efficient.
+#' 
+#' @param z time series
+#' @param order (p,d,q) where p=order AR, d=regular difference, q=order MA
+#' @param lmodel type of long-memory component: FD, FGN, PLA or NONE
+#' @return list with components: \item{bHat}{transformed optimal parameters}
+#' \item{alphaHat}{estimate of alpha} \item{HHat}{estimate of H}
+#' \item{dHat}{estimate of d} \item{phiHat}{estimate of phi}
+#' \item{thetaHat}{estimate of theta} \item{wLL}{optimized value of Whittle
+#' approximate log-likelihood} \item{LL}{corresponding exact log-likelihood}
+#' \item{convergence}{convergence indicator}
+#' @author JQ (Justin) Veenstra and A. I. McLeod
+#' @keywords ts
+#' @examples
+#' 
+#' z <- rnorm(100)
+#' arfima0(z, lmodel="FGN")
+#' 
+#' @export arfima0
 arfima0 <- function(z, order = c(0, 0, 0), lmodel = c("FD", "FGN", "PLA", "NONE")) {
     lmodel <- match.arg(lmodel)
     p <- order[1]

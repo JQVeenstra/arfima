@@ -47,10 +47,12 @@
         
         ans <- lARFIMA(z = y, phi = phi, theta = theta, dfrac = dfrac, phiseas = phiseas, thetaseas = thetaseas, 
             dfs = dfs, H = H, Hs = Hs, alpha = alpha, alphas = alphas, period = period, useC = useC)
+        
         ans
     }
     
     EntropyDM <- function(pars) {
+
         pars[indfixx] <- fixx[indfixx]
         phi <- if (p > 0) 
             pars[1:p] else numeric(0)
@@ -85,6 +87,7 @@
         
         ans <- lARFIMA(z = yy, phi = phi, theta = theta, dfrac = dfrac, phiseas = phiseas, thetaseas = thetaseas, 
             dfs = dfs, H = H, Hs = Hs, alpha = alpha, alphas = alphas, period = period, useC = useC)
+
         ans
     }
     

@@ -101,6 +101,68 @@ IdentifiableQQ <- function(phi = numeric(0), theta = numeric(0), phiseas = numer
     return(det(A) > 0)
 }
 
+
+
+#' Checks invertibility, stationarity, and identifiability of a given set of
+#' parameters
+#' 
+#' Computes whether a given long memory model is invertible, stationary, and
+#' identifiable.
+#' 
+#' This function tests for identifiability via the information matrix of the
+#' ARFIMA process.  Whether the process is stationary or invertible amounts to
+#' checking whether all the variables fall in correct ranges.
+#' 
+#' The moving average parameters are in the Box-Jenkins convention: they are
+#' the negative of the parameters given by \code{\link{arima}}.
+#' 
+#' If \code{dfrac}/\code{H}/\code{alpha} are mixed and/or
+#' \code{dfs}/\code{Hs}/\code{alphas} are mixed, an error will not be thrown,
+#' even though only one of these can drive the process at either level. Note
+#' also that the FGN or PLA have no impact on the identifiability of the model,
+#' as information matrices containing these parameters currently do not have
+#' known closed form.  These two parameters must be within their correct ranges
+#' (0<H<1 for FGN and 0 < alpha < 3 for PLA.)
+#' 
+#' @param phi The autoregressive parameters in vector form.
+#' @param theta The moving average parameters in vector form.  See Details for
+#' differences from \code{\link{arima}}.
+#' @param dfrac The fractional differencing parameter.
+#' @param phiseas The seasonal autoregressive parameters in vector form.
+#' @param thetaseas The seasonal moving average parameters in vector form.  See
+#' Details for differences from \code{\link{arima}}.
+#' @param dfs The seasonal fractional differencing parameter.
+#' @param H The Hurst parameter for fractional Gaussian noise (FGN).  Should
+#' not be mixed with \code{dfrac} or \code{alpha}: see "Details".
+#' @param Hs The Hurst parameter for seasonal fractional Gaussian noise (FGN).
+#' Should not be mixed with \code{dfs} or \code{alphas}: see "Details".
+#' @param alpha The decay parameter for power-law autocovariance (PLA) noise.
+#' Should not be mixed with \code{dfrac} or \code{H}: see "Details".
+#' @param alphas The decay parameter for seasonal power-law autocovariance
+#' (PLA) noise.  Should not be mixed with \code{dfs} or \code{Hs}: see
+#' "Details".
+#' @param delta The delta parameters for transfer functions.
+#' @param period The periodicity of the seasonal components.  Must be >= 2.
+#' @param debug When TRUE and model is not stationary/invertible or
+#' identifiable, prints some helpful output.
+#' @param ident Whether to test for identifiability.
+#' @return TRUE if the model is stationary, invertible and identifiable.  FALSE
+#' otherwise.
+#' @author Justin Veenstra
+#' @seealso \code{\link{iARFIMA}}
+#' @references McLeod, A.I. (1999) Necessary and sufficient condition for
+#' nonsingular Fisher information matrix in ARMA and fractional ARMA models The
+#' American Statistician 53, 71-72.
+#' 
+#' Veenstra, J. and McLeod, A. I. (2012, Submitted) Improved Algorithms for
+#' Fitting Long Memory Models: With R Package
+#' @keywords ts
+#' @examples
+#' 
+#' IdentInvertQ(phi = 0.3, theta = 0.3)
+#' IdentInvertQ(phi = 1.2)
+#' 
+#' @export IdentInvertQ
 IdentInvertQ <- function(phi = numeric(0), theta = numeric(0), phiseas = numeric(0), thetaseas = numeric(0), 
     dfrac = numeric(0), dfs = numeric(0), H = numeric(0), Hs = numeric(0), alpha = numeric(0), 
     alphas = numeric(0), delta = numeric(0), period = 0, debug = FALSE, ident = TRUE) {
