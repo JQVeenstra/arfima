@@ -24,10 +24,10 @@ Prints the output of a call to \code{summary} on an \code{arfima} object
 }
 \examples{
 
-\dontrun{
+\donttest{
 set.seed(54678)
 sim <- arfima.sim(1000, model = list(phi = 0.9, H = 0.3))
-fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g")
+fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=T)
 summary(fit)
 }
 

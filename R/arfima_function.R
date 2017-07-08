@@ -126,7 +126,8 @@
 #' given, though not printed under the print.arfima method.  The phis are the
 #' AR parameters, and the thetas are the MA parameters.  Residuals, regression
 #' residuals, etc., are all available, along with the parameter values and
-#' standard errors.
+#' standard errors.  Note that the muHat returned in the arfima object is
+#' of the \strong{differenced} series, if differencing is applied.
 #'
 #' Note that if multiple modes are found, they are listed in order of
 #' log-likelihood value.
@@ -145,11 +146,11 @@
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 #' dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1))
+#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
 #'
 #' fit
 #'
@@ -264,21 +265,24 @@
                 }
               }
               straightRegress <- straightRegress - length(constantInds) - 1
-              if(!straightRegress) {
-                warning("All regression terms constant.  Setting xreg to NULL")
-                xreg <- NULL
-              }
-              if(straightRegress && is.logical(dmean) && !dmean) {
-                warning("Regression with time series errors requires dmean=T or a set mean, setting T")
-                dmean <- TRUE
-              }
-              if(straightRegress && intindex && !is.logical(dmean)) {
-                warning("with an intercept term, dmean must be TRUE.  Setting it so.")
-                dmean <- TRUE
-              }
             }
+            straightRegress <- (straightRegress>0)
 
-        } else {
+            if(!straightRegress) {
+              warning("All regression terms constant.  Setting xreg to NULL")
+              xreg <- NULL
+            }
+            else if(straightRegress && dmean != TRUE) {
+              warning("Regression with time series errors requires dmean=T, setting")
+              dmean <- TRUE
+            }
+            else if(straightRegress && intindex && is.numeric(dmean)) {
+              warning("with an intercept term, dmean must be TRUE.  Setting it so.")
+              dmean <- TRUE
+            }
+          }
+
+         else {
             if (is.matrix(regpar) || is.data.frame(regpar)) {
                 if (dim(regpar)[2] != dim(xreg)[2]) {
                   stop("xreg and regpar sizes do not match")
@@ -306,77 +310,70 @@
 
         }
 
-        if(!is.null(xreg)) {
+        xreg <- as.matrix(xreg)
 
-          xreg <- as.matrix(xreg)
+        if (length(constantInds) > 0) {
 
-          if (length(constantInds) > 0) {
+          warning(paste("columns", paste(constantInds, collapse = ", "), "are constant and will be removed"))
 
-            warning(paste("columns", paste(constantInds, collapse = ", "), "are constant and will be removed"))
+          xreg <- xreg[, -constantInds]
 
-            xreg <- xreg[, -constantInds]
+          namexreg <- namexreg[-constantInds]
 
-            namexreg <- namexreg[-constantInds]
-
-          }
-
-
-          if(intindex && is.logical(dmean) && dmean) {
-            regpar <- regpar[-1, ]
-            xreg <- xreg[, -1]
-            intname <- namexreg[1]
-            namexreg <- namexreg[-1]
-          }
-          else if(intindex) {
-            warning(paste(paste("there is a constant column named", namexreg[1]),
-                    "take to be the intercept, but dmean is not TRUE.  This column",
-                    "will be removed and ignored.", sep = "\n"))
-            regpar <- regpar[-1, ]
-            xreg <- xreg[, -1]
-            intindex <- 0
-          }
-          else if(is.logical(dmean) && dmean) {
-            intname <- "Intercept"
-          }
-
-          s <- regpar$s <- regpar$s + 1
-          r <- regpar$r
-          b <- regpar$b
-
-          if (any(r > 0) || any(s>1)) {
-              #cat("note: transfer functions do not work with dynamic mean:  setting dmean to FALSE\n")
-              dmean <- FALSE
-          }
-          numvarreg <- sum(s) + sum(r)#333 + if(is.logical(dmean)&&dmean) 1 else 0
-          regeach <- if(straightRegress) 1 else reglist$numeach
-          if (length(regeach) == 0)
-              regeach <- 1
-          if (length(regeach) != 1 || regeach != round(regeach) || regeach <= 0) {
-              warning("invalid reglist$numeach: resetting to 1")
-              regeach <- 1
-          }
-
-          regmin <- reglist$minn
-          regmax <- reglist$maxx
-          if (length(regmin) == 0 || is.na(regmin))
-              regmin <- if(regeach>1) -10 else 0
-          if (length(regmax) == 0 || is.na(regmax))
-              regmax <- if(regeach>1) 10 else 0
-          if (itmean)
-              stop("Please note that for regression problems, the mean is calculated separately\n via optimization or on the regression parameters or by the mean of the series;\n therefore itmean is not valid")
         }
-      else {
-        r <- s <- b <- 0
-        numvarreg <- regeach <- 0
-        namexreg <- reglist <- regpar <- NULL
+
+
+        if(intindex && is.logical(dmean) && dmean) {
+          regpar <- regpar[-1, ]
+          xreg <- xreg[, -1]
+          intname <- namexreg[1]
+          namexreg <- namexreg[-1]
+        }
+        else if(intindex) {
+          warning(paste(paste("there is a constant column named", namexreg[1]),
+                  "take to be the intercept, but dmean is not TRUE.  This column",
+                  "will be removed and ignored.", sep = "\n"))
+          regpar <- regpar[-1, ]
+          xreg <- xreg[, -1]
+          intindex <- 0
+        }
+        else if(is.logical(dmean) && dmean) {
+          intname <- "Intercept"
+        }
+
+        s <- regpar$s <- regpar$s + 1
+        r <- regpar$r
+        b <- regpar$b
+
+        if (any(r > 0) || any(s>1)) {
+            #cat("note: transfer functions do not work with dynamic mean:  setting dmean to FALSE\n")
+            dmean <- FALSE
+        }
+        numvarreg <- sum(s) + sum(r)#333 + if(is.logical(dmean)&&dmean) 1 else 0
+        regeach <- if(straightRegress) 1 else reglist$numeach
+        if (length(regeach) == 0)
+            regeach <- 1
+        if (length(regeach) != 1 || regeach != round(regeach) || regeach <= 0) {
+            warning("invalid reglist$numeach: resetting to 1")
+            regeach <- 1
+        }
+
+        regmin <- reglist$minn
+        regmax <- reglist$maxx
+        if (length(regmin) == 0 || is.na(regmin))
+            regmin <- if(regeach>1) -10 else 0
+        if (length(regmax) == 0 || is.na(regmax))
+            regmax <- if(regeach>1) 10 else 0
+        if (itmean)
+            stop("Please note that for regression problems, the mean is calculated separately\n via optimization or on the regression parameters or by the mean of the series;\n therefore itmean is not valid")
       }
-    } else {
-        r <- s <- b <- 0
-        numvarreg <- regeach <- 0
-        namexreg <- NULL
+    else {
+      r <- s <- b <- 0
+      numvarreg <- regeach <- 0
+      namexreg <- reglist <- regpar <- NULL
     }
 
-    if (!is.logical(dmean) && !is.double(dmean))
+    if (is.numeric(dmean) && !is.double(dmean))
         stop("dmean must be logical or a double")
 
     if (itmean && ((is.logical(dmean) && dmean) || is.numeric(dmean))) {
@@ -565,7 +562,6 @@
             numtries <- numtries/(snumeach[1]^(sum(!is.na(smafixed))))
         if (slmodel != "n" && !is.na(sfracfix))
             numtries <- numtries/snumeach[2]
-
     }
 
     # if(numvars == 0 && numtries > 1) stop('invalid specification of variables')
@@ -618,7 +614,7 @@
 
     flag0 <- regOnly <- FALSE
     if (p + q + numeach[2] + pseas + qseas + snumeach[2] == 0) {
-      if(!regeach)
+      if(regeach>1)
         flag0 <- TRUE
       else
         regOnly <- TRUE
@@ -627,21 +623,19 @@
     differencing <- if (D > 0) TRUE else FALSE
 
 
-    if (!itmean) {
-      if (is.logical(dmean) && !dmean && !straightRegress)
-        meanval <- mean(y)
-      else if (is.double(dmean))
-        meanval <- dmean
-      else
-        meanval <- 0
-      if (!flag0)
-        y <- y - meanval
-    } else meanval <- 0
+
+    if (is.logical(dmean) && !dmean && !straightRegress)
+      meanval <- mean(y)
+    else if (is.numeric(dmean))
+      meanval <- dmean
+    else
+      meanval <- 0
+
 
     sumfixed <- sum(indfixx)
 
-    numvars1 <- numvars <- numvars - sumfixed
-    if (numvars == 0)
+    numvars1 <- numvars - sumfixed
+    if (numvars1 == 0)
         getHess <- FALSE
 
 
@@ -679,180 +673,197 @@
             numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
             call = match.call(), flag0 = flag0)
     } else {
-        num <- if (!rand)
-            numtries else numrand
-        if(startflag) num <- nrow(starts)
+      num <- if (!rand)
+        numtries else numrand
+      if(startflag) num <- nrow(starts)
 
-        if (rand && !startflag) {
-            if (length(num) == 0) {
-                warning("random starts selected and no number of starts selected: setting to 8")
-                num <- 8
-            }
-            starts <- matrix(0, nrow = num, ncol = numvars + sumfixed)
+      if (rand && !startflag) {
+        if (length(num) == 0) {
+          warning("random starts selected and no number of starts selected: setting to 8")
+          num <- 8
+        }
+        starts <- matrix(0, nrow = num, ncol = numvars)
 
-            pl1 <- 0
-            if (!is.na(seed) && !is.null(seed))
-                set.seed(seed) else warning("Random start seed not selected:  results may not be reproducible")
-            if (p + q + pseas + qseas > 0) {
-                starts[, 1:(p + q + pseas + qseas)] <- matrix(runif(num * (p + q + pseas +
-                  qseas), min = -1, max = 1), ncol = (p + q + pseas + qseas))
-            }
-
-            if (lmodel != "n") {
-                pl1 <- 1
-                if (lmodel == "d")
-                  starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = -1, max = 0.5) else if (lmodel == "g")
-                  starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = 0, max = 1) else starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = 0, max = 3)
-            }
-            if (slmodel != "n") {
-                if (slmodel == "d")
-                  starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = -1, max = 0.5) else if (slmodel == "g")
-                  starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = 0, max = 1) else starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = 0,
-                  max = 3)
-            }
-            if (!is.null(xreg)) {
-                if(!straightRegress) {
-                  starts[, (1 + p + q + pl1 + pseas + qseas):(1 + p + q + pl1 + pseas + qseas +
-                    numvarreg)] <- matrix(runif(num * (numvarreg), min = regmin,
-                    max = regmax), nrow = num)
-                }
-                else if(is.logical(dmean)&&dmean) {
-                  coeffs <- lsfit(xreg, y)$coef[c(2:ncol(xreg), 1)]
-                  for(ii in 1:numvarreg) starts[, (1 + p + q + pl1 + pseas + qseas+ii)] <- coeffs
-                }
-                else {
-                  coeffs <- lsfit(xreg, y, intercept = FALSE)$coef
-                  for(ii in 1:numvarreg) starts[, (1 + p + q + pl1 + pseas + qseas+ii)] <- coeffs
-                }
-            }
-            else if(is.logical(dmean) && dmean)
-              starts[, (1 + p + q + pl1 + pseas + qseas+1)] <- mean(y)
-
-
-        } else if (num > 1 && !startflag) {
-            pl1 <- 0
-
-            li <- vector("list", numvars)
-            if (p + q > 0) {
-                if (inclbdries)
-                  seqq <- seq(-1 + eps3, 1 - eps3, length.out = numeach[1]) else {
-                  seqq <- seq(-1 + eps3, 1 - eps3, length.out = numeach[1] + 2)
-                  seqq <- seqq[-1]
-                  seqq <- seqq[-length(seqq)]
-                }
-                for (i in 1:(p + q + pseas + qseas)) if (!indfixx[i])
-                  li[[i]] <- seqq else li[[i]] <- 0
-            }
-            if (pseas + qseas > 0) {
-                if (inclbdries)
-                  seqq <- seq(-1 + eps3, 1 - eps3, length.out = snumeach[1]) else {
-                  seqq <- seq(-1 + eps3, 1 - eps3, length.out = snumeach[1] + 2)
-                  seqq <- seqq[-1]
-                  seqq <- seqq[-length(seqq)]
-                }
-                for (i in 1:(p + q + pseas + qseas)) if (!indfixx[i])
-                  li[[i]] <- seqq else li[[i]] <- 0
-            }
-            if (lmodel != "n") {
-                pl1 <- 1
-                if (!indfixx[(p + q + 1 + pseas + qseas)]) {
-                  if (lmodel == "d") {
-                    minner <- -1
-                    maxxer <- 0.5
-                  } else if (lmodel == "g") {
-                    minner <- 0
-                    maxxer <- 1
-                  } else {
-                    minner <- 0
-                    maxxer <- 3
-                  }
-                  if (inclbdries)
-                    seqq <- seq(minner + eps3, maxxer - eps3, length.out = numeach[2]) else {
-                    seqq <- seq(minner + eps3, maxxer - eps3, length.out = numeach[2] +
-                      2)
-                    seqq <- seqq[-1]
-                    seqq <- seqq[-length(seqq)]
-                  }
-                } else seqq <- 0
-                li[[(p + q + 1 + pseas + qseas)]] <- seqq
-            }
-            pl1_1 <- 0
-            if (slmodel != "n") {
-                pl1_1 <- 1
-                if (!indfixx[(p + q + 1 + pseas + qseas + pl1)]) {
-                  if (slmodel == "d") {
-                    minner <- -1
-                    maxxer <- 0.5
-                  } else if (slmodel == "g") {
-                    minner <- 0
-                    maxxer <- 1
-                  } else {
-                    minner <- 0
-                    maxxer <- 3
-                  }
-                  if (inclbdries)
-                    seqq <- seq(minner + eps3, maxxer - eps3, length.out = snumeach[2]) else {
-                    seqq <- seq(minner + eps3, maxxer - eps3, length.out = snumeach[2] +
-                      2)
-                    seqq <- seqq[-1]
-                    seqq <- seqq[-length(seqq)]
-                  }
-                } else seqq <- 0
-                li[[(p + q + 1 + pseas + qseas + pl1)]] <- seqq
-            }
-            if (!is.null(xreg)) {
-                if(!straightRegress) {
-                  if (inclbdries)
-                    seqq <- seq(regmin + eps3, regmax - eps3, length.out = regeach)
-                  else {
-                    seqq <- seq(regmin + eps3, regmax - eps3, length.out = regeach + 2)
-                    seqq <- seqq[-1]
-                    seqq <- seqq[-length(seqq)]
-                  }
-
-                  for (i in 1:(numvarreg)) li[[(p + q + pseas + qseas + pl1 + pl1_1) + i]] <- seqq
-                }
-                else if(is.logical(dmean)&&dmean){
-                  coeffs <- lsfit(xreg, y)$coef[c(2:(ncol(xreg)+1), 1)]
-                  for (i in 1:(numvarreg+1)) li[[(p + q + pseas + qseas + pl1 + pl1_1) + i]] <- coeffs[i]
-                }
-                else {
-                  coeffs <- lsfit(xreg, y, intercept = FALSE)$coef
-                  for (i in 1:(numvarreg)) li[[(p + q + pseas + qseas + pl1 + pl1_1) + i]] <- coeffs[i]
-                }
-              }
-              else if(is.logical(dmean) && dmean)
-                li[[length(li)]] <- mean(y)
-
-	          starts <- expand.grid(li, KEEP.OUT.ATTRS = FALSE)
-        } else if(!startflag) {
-
-            starts <- if (numvars > 0)
-                matrix(0, ncol = numvars) else matrix(0)
-            if(straightRegress && dmean == TRUE) {
-              coeffs <- lsfit(xreg, y)$coef[c(2:(ncol(xreg)+1), 1)]
-              starts[, (numvars-length(coeffs)+1):numvars] <- coeffs
-            }
-            else if(straightRegress) {
-              coeffs <- lsfit(xreg, y, intercept = FALSE)$coef
-              starts[, (numvars-length(coeffs)+1):numvars] <- coeffs
-            }
-            else if(dmean == TRUE)
-              starts[, numvars] <- mean(y)
+        pl1 <- 0
+        if (!is.na(seed) && !is.null(seed))
+          set.seed(seed) else warning("Random start seed not selected:  results may not be reproducible")
+        if (p + q + pseas + qseas > 0) {
+          starts[, 1:(p + q + pseas + qseas)] <- matrix(runif(num * (p + q + pseas +
+                                                                       qseas), min = -1, max = 1), ncol = (p + q + pseas + qseas))
         }
 
-        if (nrow(starts) != num)
-            stop("error in starts")
-        if (rand)
-            strg <- " the random start " else strg <- " the "
-        if (!quiet) {
-            cat("Beginning", strg, "fits with ", num, " starting values.\n", sep = "")
-            cat("\n")
+        if (lmodel != "n") {
+          pl1 <- 1
+          if (lmodel == "d")
+            starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = -1, max = 0.5) else if (lmodel == "g")
+              starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = 0, max = 1) else starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = 0, max = 3)
         }
-        fit <- vector("list", num)
+        if (slmodel != "n") {
+          if (slmodel == "d")
+            starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = -1, max = 0.5) else if (slmodel == "g")
+              starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = 0, max = 1) else starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = 0,
+                                                                                                                                                    max = 3)
+        }
+        if (!is.null(xreg)) {
+          if(!straightRegress) {
+            starts[, (1 + p + q + pl1 + pseas + qseas):(1 + p + q + pl1 + pseas + qseas +
+                                                          numvarreg)] <- matrix(runif(num * (numvarreg), min = regmin,
+                                                                                      max = regmax), nrow = num)
+          }
+          else if(is.logical(dmean)&&dmean) {
+            coeffs <- lsfit(xreg, y)$coef[c(2:ncol(xreg), 1)]
+            for(ii in 1:numvarreg) starts[, (1 + p + q + pl1 + pseas + qseas+ii)] <- coeffs
+          }
+          else {
+            coeffs <- lsfit(xreg, y, intercept = FALSE)$coef
+            for(ii in 1:numvarreg) starts[, (1 + p + q + pl1 + pseas + qseas+ii)] <- coeffs
+          }
+        }
+        else if(is.logical(dmean) && dmean)
+          starts[, (1 + p + q + pl1 + pseas + qseas+1)] <- mean(y)
 
-        if(!straightRegress)
-          xreg <- as.vector(xreg)
+
+      } else if (num > 1 && !startflag) {
+        pl1 <- 0
+
+        li <- vector("list", numvars)
+        if (p + q > 0) {
+          if (inclbdries)
+            seqq <- seq(-1 + eps3, 1 - eps3, length.out = numeach[1]) else {
+              seqq <- seq(-1 + eps3, 1 - eps3, length.out = numeach[1] + 2)
+              seqq <- seqq[-1]
+              seqq <- seqq[-length(seqq)]
+            }
+
+        }
+        if (pseas + qseas > 0) {
+          if (inclbdries)
+            seqq <- seq(-1 + eps3, 1 - eps3, length.out = snumeach[1]) else {
+              seqq <- seq(-1 + eps3, 1 - eps3, length.out = snumeach[1] + 2)
+              seqq <- seqq[-1]
+              seqq <- seqq[-length(seqq)]
+            }
+        }
+        for (i in 1:(p + q + pseas + qseas))
+          li[[i]] <- seqq
+        if (lmodel != "n") {
+          pl1 <- 1
+          if (lmodel == "d") {
+            minner <- -1
+            maxxer <- 0.5
+          } else if (lmodel == "g") {
+            minner <- 0
+            maxxer <- 1
+          } else {
+            minner <- 0
+            maxxer <- 3
+          }
+          if (inclbdries)
+            seqq <- seq(minner + eps3, maxxer - eps3, length.out = numeach[2]) else {
+              seqq <- seq(minner + eps3, maxxer - eps3, length.out = numeach[2] +
+                            2)
+              seqq <- seqq[-1]
+              seqq <- seqq[-length(seqq)]
+            }
+          li[[(p + q + pl1 + pseas + qseas)]] <- seqq
+        }
+        pl1_1 <- 0
+        if (slmodel != "n") {
+          pl1_1 <- 1
+          if (slmodel == "d") {
+            minner <- -1
+            maxxer <- 0.5
+          } else if (slmodel == "g") {
+            minner <- 0
+            maxxer <- 1
+          } else {
+            minner <- 0
+            maxxer <- 3
+          }
+          if (inclbdries)
+            seqq <- seq(minner + eps3, maxxer - eps3, length.out = snumeach[2]) else {
+              seqq <- seq(minner + eps3, maxxer - eps3, length.out = snumeach[2] +
+                            2)
+              seqq <- seqq[-1]
+              seqq <- seqq[-length(seqq)]
+            }
+          li[[(p + q + 1 + pseas + qseas + pl1)]] <- seqq
+        }
+        if (!is.null(xreg)) {
+          if(!straightRegress) {
+            if (inclbdries)
+              seqq <- seq(regmin + eps3, regmax - eps3, length.out = regeach)
+            else {
+              seqq <- seq(regmin + eps3, regmax - eps3, length.out = regeach + 2)
+              seqq <- seqq[-1]
+              seqq <- seqq[-length(seqq)]
+            }
+
+            for (i in 1:(numvarreg)) li[[(p + q + pseas + qseas + pl1 + pl1_1) + i]] <- seqq
+          }
+          else if(is.logical(dmean)&&dmean){
+            coeffs <- lsfit(xreg, y)$coef[c(2:(ncol(xreg)+1), 1)]
+            for (i in 1:(numvarreg+1)) li[[(p + q + pseas + qseas + pl1 + pl1_1) + i]] <- coeffs[i]
+          }
+          else {
+            coeffs <- lsfit(xreg, y, intercept = FALSE)$coef
+            for (i in 1:(numvarreg)) li[[(p + q + pseas + qseas + pl1 + pl1_1) + i]] <- coeffs[i]
+          }
+        }
+        else if(is.logical(dmean) && dmean)
+          li[[length(li)]] <- mean(y)
+
+        starts <- expand.grid(li, KEEP.OUT.ATTRS = FALSE)
+
+        if(sumfixed>0) {
+          for(i in 1:numvars) {
+            if(indfixx[i]) starts[, i] <- rep(fixx[i], nrow(starts))
+          }
+          starts <- unique(starts)
+        }
+      } else if(!startflag) {
+
+        starts <- if (numvars > 0)
+          matrix(0, nrow=1,ncol = numvars) else matrix(0)
+        if(straightRegress && dmean == TRUE) {
+          coeffs <- lsfit(xreg, y)$coef[c(2:(ncol(xreg)+1), 1)]
+          starts[, (numvars-length(coeffs)+1):numvars] <- coeffs
+        }
+        else if(straightRegress) {
+          coeffs <- lsfit(xreg, y, intercept = FALSE)$coef
+          starts[, (numvars-length(coeffs)+1):numvars] <- coeffs
+        }
+        else if(dmean == TRUE)
+          starts[, numvars] <- mean(y)
+        if(sumfixed>0) {
+          for(i in 1:numvars) {
+            if(indfixx[i]) starts[, i] <- fixx[i]
+          }
+        }
+      }
+
+      if(dmean==F||is.numeric(dmean)) {
+        indfixxM <- c(indfixx, TRUE)
+        numvarsM <- numvars + 1
+      }
+      else {
+        indfixxM <- indfixx
+        numvarsM <- numvars
+      }
+
+      if (nrow(starts) != num)
+        stop("error in starts")
+      if (rand)
+        strg <- " the random start " else strg <- " the "
+      if (!quiet) {
+        cat("Beginning", strg, "fits with ", num, " starting values.\n", sep = "")
+        cat("\n")
+      }
+      fit <- vector("list", num)
+
+      if(!straightRegress)
+        xreg <- as.vector(xreg)
+
 
         if (cpus == 1) {
             for (i in 1:num) {
@@ -930,8 +941,6 @@
                   length(allpars[[i]]$dfs) + length(allpars[[i]]$Hs) + length(allpars[[i]]$alpha) +
                   length(allpars[[i]]$alphas) + sum(r) + sum(s) + 1] else meanval
 
-
-
             rr <- tacvfARFIMA(phi = allpars[[i]]$phi, theta = allpars[[i]]$theta, phiseas = allpars[[i]]$phiseas,
                 thetaseas = allpars[[i]]$thetaseas, dfrac = allpars[[i]]$dfrac, dfs = allpars[[i]]$dfs,
                 H = allpars[[i]]$H, Hs = allpars[[i]]$Hs, alpha = allpars[[i]]$alpha, alphas = allpars[[i]]$alphas,
@@ -960,40 +969,14 @@
 
             if (getHess) {
 
-                hess <- fit[[i]]$hessian[1:(numvars1), 1:(numvars1)]
-                se <- tryCatch(sqrt(diag(solve(-hess))), error = function(err) rep(NA, max(dim(hess)[1],
-                  1)))
+                hess <- fit[[i]]$hessian[!indfixx, !indfixx]
 
-                if(straightRegress) {
-                  if(dmean != TRUE) {
-		    se <- c(se, -Inf)
-		    indfixx <- c(indfixx, FALSE)
-		  }
-                  len_se <- length(se)
-                  indsss <- c(1:(len_se-ncol(xreg)-1), len_se, (len_se-ncol(xreg)):(len_se-1))
-                  if(dmean != TRUE) {
-		    indfixx <- indfixx[indsss]
-		  }
-                  se <- se[indsss]
-                }
-                else if(!is.null(xreg)) {
-                  se <- c(se, -Inf)
-                  indfixx <- c(indfixx, FALSE)
-                  len_se <- length(se)
-                  val <- len_se-sum(s)-sum(r)-1
-                  if(val>0)
-                    indsss <- c(1:val, len_se, (val+1):(len_se-1))
-                  else
-                    indsss <- c(len_se, 1:(len_se-1))
-                  se <- se[indsss]
-		  indfixx <- indfixx[indsss]
-                }
-                allpars[[i]]$hessian <- hess
-                allpars[[i]]$se <- rep(-Inf, numvars1 + if (dmean != TRUE && is.null(xreg)) 1 else 0)
-                if ((is.numeric(dmean) || (!dmean && !itmean)) && is.null(xreg))
-                  se <- c(se, -Inf)
+                se <- rep(-Inf, numvarsM)
+                se[!indfixxM] <- tryCatch(sqrt(diag(solve(-hess))),
+                              error = function(err) rep(NA, max(dim(hess)[1], 1)))
 
-                allpars[[i]]$se[!indfixx] <- se
+                allpars[[i]]$se <- se
+                allpars[[i]]$hess <- hess
 
             } else hess <- numeric(0)
 
@@ -1057,8 +1040,7 @@
 
                 allpars[[i]]$xreglist <- xreglist
 
-                mmu <- if ((is.logical(dmean) && dmean) || itmean)
-                  allpars[[i]]$muHat else 0
+                mmu <- allpars[[i]]$muHat
 
                 if(straightRegress) {
                   resR <- z - xr %*% omega
@@ -1082,8 +1064,8 @@
                 allpars[[i]]$fitted <- resRdiff - res
 
             } else {
-                if ((is.logical(dmean) && dmean) || itmean)
-                  yy <- y - allpars[[i]]$muHat else yy <- y
+
+                yy <- y - allpars[[i]]$muHat
                 resR <- NULL
                 sigma2muse <- getsigma2muhat(yy, phi = allpars[[i]]$phi, theta = allpars[[i]]$theta,
                   thetaseas = allpars[[i]]$thetaseas, phiseas = allpars[[i]]$phiseas, period = period,
@@ -1158,10 +1140,10 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(theta = 0.9, dfrac = 0.4))
-#' fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE)
+#' fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE, back=T)
 #' fit
 #' distance(fit)
 #' fit1 <- weed(fit)
@@ -1420,10 +1402,10 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1))
+#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
 #'
 #' fit
 #'
@@ -1479,12 +1461,13 @@ distance <- function(ans, p = 2, digits = 4) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
-#' fit <- arfima(sim, order = c(1, 0, 1))
+#' fit <- arfima(sim, order = c(1, 0, 1), back=T)
 #' fit
 #' fit <- bestModes(fit, 2)
+#' fit
 #' }
 #'
 #' @export bestModes

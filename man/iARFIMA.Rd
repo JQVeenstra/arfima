@@ -50,7 +50,7 @@ the negative of the parameters given by \code{\link{arima}}.
 }
 \examples{
 
-\dontrun{
+\donttest{
 tick <- proc.time()
 exactI <- iARFIMA(phi = c(.4, -.2), theta = c(.7), phiseas = c(.8, -.4),
 	d = TRUE, dfs = TRUE, period = 12)

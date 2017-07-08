@@ -137,7 +137,8 @@ An object of class "arfima".  In it, full information on the fit is
 given, though not printed under the print.arfima method.  The phis are the
 AR parameters, and the thetas are the MA parameters.  Residuals, regression
 residuals, etc., are all available, along with the parameter values and
-standard errors.
+standard errors.  Note that the muHat returned in the arfima object is
+of the \strong{differenced} series, if differencing is applied.
 
 Note that if multiple modes are found, they are listed in order of
 log-likelihood value.
@@ -177,11 +178,11 @@ the log-likelihood; and a "3" means C is used to compute everything.
 }
 \examples{
 
-\dontrun{
+\donttest{
 set.seed(8564)
 sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 dfrac = 0.4, theta = 0.9))
-fit <- arfima(sim, order = c(2, 0, 1))
+fit <- arfima(sim, order = c(2, 0, 1), back=T)
 
 fit
 

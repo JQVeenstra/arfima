@@ -1,8 +1,7 @@
 #' Predicts from a fitted object.
 #'
 #' Performs prediction of a fitted \code{arfima} object. Includes prediction
-#' for each mode, bootstrap predictions and intervals, and exact and limiting
-#' prediction error standard deviations.
+#' for each mode and exact and limiting prediction error standard deviations.
 #'
 #'
 #' @param object A fitted \code{arfima} object
@@ -13,11 +12,8 @@
 #' of the series length and 1000.  Overriden by \code{n.use}.
 #' @param n.use Directly set the number mentioned in \code{prop.use}.
 #' @param newxreg If a regression fit, the new regressors
-#' @param predint For bootstrap prediction intervals, the percentiles to use
-#' @param bootpred Whether or not to generate bootstrap predictions and
-#' intervals.  Uses a bootstrap of the residuals as innovations to
-#' \code{\link{arfima.sim}}.
-#' @param B The number of bootstrap replicates to perform
+#' @param predint The percentile to use for prediction intervals assuming normal
+#' deviations.
 #' @param exact Controls whether exact (based on the theoretical autocovariance
 #' matrix) prediction variances are calculated (which is recommended), as well
 #' as whether the exact prediction formula is used when the process is
@@ -25,8 +21,6 @@
 #' used to predict is large).  Defaults to the string "default", which is
 #' \code{TRUE} for the first and \code{FALSE} for the second.  A Boolean value
 #' (\code{TRUE} or \code{FALSE}) will set both to this value.
-#' @param seed The seed or seeds (if multiple, must have length equal to
-#' \code{B}) for the bootstrap replicates
 #' @param setmuhat0 Experimental. Sets muhat equal to zero
 #' @param cpus The number of CPUs to use for prediction. Currently not
 #' implemented
@@ -44,10 +38,10 @@
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(82365)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
-#' fit <- arfima(sim, order = c(0, 1, 1))
+#' fit <- arfima(sim, order = c(0, 1, 1), back=T)
 #' fit
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
@@ -55,9 +49,8 @@
 #' }
 #'
 predict.arfima <- function(
-  object, n.ahead = 1, prop.use = "default", newxreg = NULL,
-  predint = 0.95, bootpred = TRUE, B = if (bootpred) 1000 else 0,
-  exact = c("default", T, F), seed = NA, setmuhat0 = FALSE, cpus = 1,
+  object, n.ahead = 1, prop.use = "default", newxreg = NULL, predint = 0.95,
+  exact = c("default", T, F), setmuhat0 = FALSE, cpus = 1,
   trend = NULL, n.use = NULL, xreg = NULL,...)
   {
     if(!is.null(xreg)) {
@@ -100,7 +93,6 @@ predict.arfima <- function(
     }
     else stop(paste('Got', exact, 'in exact; expecting T, F, or "default"'))
 
-    npar <- bootpred
     if (!is.null(object$s) && any(object$s > 1))
         stop("predict only takes static regression parameters, not full transfer functions/dynamic regressions")
     if (!is.null(object$r) && any(object$r > 1))
@@ -111,12 +103,7 @@ predict.arfima <- function(
     myNCOL <- function(x) if (is.null(x))
         0 else ncol(x)
 
-    if (length(seed) == 0)
-        seed <- NA
 
-    # if (bootpred && is.na(seed))
-    #     warning("bootstrap predictions and intervals may not be reproducible without setting the seed(s)")
-    #
     nrxreg <- myNROW(newxreg)
 
     if (nrxreg > 0 && !object$strReg)
@@ -137,10 +124,9 @@ predict.arfima <- function(
 
     if (nrxreg==0 && !is.null(object$xreg))
         stop("xreg in input to arfima, but no (new)xreg input to predict")
-    #print(myNCOL(newxreg))
     if (myNCOL(object$xreg) != myNCOL(newxreg))
         stop("unconformable newxreg and xreg")
-    #print(myNROW(newxreg))
+
     if (myNROW(newxreg) && (myNROW(newxreg) != n.ahead))
         stop("unconformable 'newxreg' and 'n.ahead'")
 
@@ -149,7 +135,7 @@ predict.arfima <- function(
     tacvfs <- tacvf(obj = object, xmaxlag = n.ahead, forPred = TRUE, n.ahead = n.ahead +
         1)
 
-    if (nrxreg || (bootpred && npar))
+    if (nrxreg)
         resids <- resid(object)
     if (nrxreg) {
         newXreg <- newxreg
@@ -170,6 +156,7 @@ predict.arfima <- function(
         nz <- length(zy)
         zz <- c(zy, rep(0, n.ahead))
         muHat <- tacvfs[[i + 1]]$muHat
+
         if (object$differencing) {
             if (setmuhat0)
                 muHat <- 0
@@ -190,7 +177,6 @@ predict.arfima <- function(
             zinit <- NULL
         }
 
-        # do bootstrap preds in predictWork too!!!  so can eventually parallelize.
         nz <- length(zy)
         startzy <- if(nz-n.use<=1) 1 else nz-n.use
 
@@ -220,27 +206,10 @@ predict.arfima <- function(
             znew$Forecast <- znew$Forecast[-c(1:icap)]
         }
 
-        if (bootpred && B > 0) {
-            A <- t(Boot(object$modes[[i]], dint = dint, dseas = dseas, period = period, R = B,
-                n.ahead = n.ahead, n = nz, zinit = zinit,  pred = TRUE,
-                seed = seed))#lastpoint = zy[nz],
 
-            A <- apply(A, 2, sort)
 
-            up <- as.vector(A[ceiling(nrow(A) * (1 - (1 - predint)/2)), ])
-            down <- as.vector(A[floor(nrow(A) * ((1 - predint)/2)), ])
-            znew$uppernp <- up + meanwx
-            znew$lowernp <- down + meanwx
-            if(B%%2==1)
-              znew$medvalnp <- as.vector(A[ceiling(nrow(A)/2), ]) + meanwx
-            else {
-              mid <- nrow(A)/2
-              znew$medvalnp <- apply(A[mid:(mid+1), ], 2, mean) + meanwx
-            }
+        znew$lowernp <- znew$uppernp <- znew$medvalnp <- znew$lowerp <- znew$upperp <- znew$medvalp <- NULL
 
-        } else {
-            znew$lowernp <- znew$uppernp <- znew$medvalnp <- znew$lowerp <- znew$upperp <- znew$medvalp <- NULL
-        }
         if (length(tacvfs[[i + 1]]$psis) > 0) {
             limiting <- TRUE
             sigmas <- cumsum(tacvfs[[i + 1]]$psis^2)[1:n.ahead]
@@ -254,10 +223,7 @@ predict.arfima <- function(
         preds[[i]] <- znew
     }
     preds$z <- object$z
-    preds$seed <- seed
     preds$limiting <- limiting
-    preds$bootpred <- npar
-    preds$B <- B
     preds$predint <- predint
     preds$name <- deparse(substitute(object))
 
@@ -334,15 +300,7 @@ Z <- function(l, d, ds, s) {
 
 print.predARFIMA <- function(x, digits = max(6, getOption("digits") - 3), ...) {
     n <- length(x$z)
-    if (is.null(x$meanval))
-        bootpred <- FALSE else bootpred <- TRUE
-    if (bootpred) {
-        lower <- x$lower
-        upper <- x$upper
-        meanpred <- x$meanval
-        B <- x$B
-        predint <- x$predint
-    }
+
     forecasts <- x$Forecast
     exactSD <- x$exactSD
     approxSD <- x$approxSD
@@ -351,14 +309,7 @@ print.predARFIMA <- function(x, digits = max(6, getOption("digits") - 3), ...) {
     namer <- c("Forecasts", "Exact SD", if (!is.null(approxSD)) "Approximate SD" else NULL)
     rownames(ans) <- namer
     colnames(ans) <- 1:n.ahead
-    if (bootpred) {
-        ans1 <- rbind(upper, meanpred, lower)
-        intt <- paste(round(100 * predint), "%", sep = "")
-        namer1 <- c(paste("Upper", intt), "Prediction (Mean)", paste("Lower", intt))
-        rownames(ans1) <- namer1
-        colnames(ans1) <- 1:n.ahead
-        ret <- list(`Forecasts and SDs` = ans, `Bootstrap Replicates` = B, `Bootstrap Predictions and Intervals` = ans1)
-    } else ret <- list(`Forecasts and SDs` = ans)
+    ret <- list(`Forecasts and SDs` = ans)
     print(ret, digits = digits, ...)
 }
 

@@ -38,12 +38,12 @@ fitted \code{arfima} object.
 }
 \examples{
 
-\dontrun{
+\donttest{
 set.seed(1234)
 sim <- arfima.sim(1000, model = list(dfrac = 0.4, phi = .8, theta = -0.5))
-fit1 <- arfima(sim, order = c(1, 0, 1))
-fit2 <- arfima(sim, order = c(1, 0, 1), lmodel = "g")
-fit3 <- arfima(sim, order = c(1, 0, 1), lmodel = "h")
+fit1 <- arfima(sim, order = c(1, 0, 1), back=T)
+fit2 <- arfima(sim, order = c(1, 0, 1), lmodel = "g", back=T)
+fit3 <- arfima(sim, order = c(1, 0, 1), lmodel = "h", back=T)
 fit1
 fit2
 fit3

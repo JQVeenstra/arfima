@@ -12,12 +12,13 @@
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
-#' fit <- arfima(sim, order = c(1, 0, 1))
+#' fit <- arfima(sim, order = c(1, 0, 1), back=T)
 #' fit
 #' fit <- removeMode(fit, 3)
+#' fit
 #' }
 #'
 #' @export removeMode
@@ -57,10 +58,10 @@ BIC <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(82365)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
-#' fit <- arfima(sim, order = c(0, 1, 1))
+#' fit <- arfima(sim, order = c(0, 1, 1), back=T)
 #' fit
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
@@ -71,12 +72,11 @@ print.predarfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 
     n <- length(x$z)
 
-    m <- length(x) - 7
+    m <- length(x) - arfima_const_predvarnum
 
     seed <- x$seed
     limiting <- x$limiting
-    bootpred <- x$bootpred
-    B <- x$B
+
     predint <- x$predint
 
     ret <- vector("list", m)
@@ -90,16 +90,8 @@ print.predarfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
                            if (exact) "Exact SD" else NULL,
                            if (limiting) "Limiting SD" else NULL)
         colnames(ans) <- 1:n.ahead
-        if (bootpred) {
-            ans2 <- rbind(x[[i]]$uppernp, x[[i]]$medvalnp, x[[i]]$lowernp)
-            intt <- paste(round(100 * predint), "%", sep = "")
-            namer1 <- c(paste("Upper", intt), "Prediction (Median)", paste("Lower", intt))
-            rownames(ans2) <- namer1
-            colnames(ans2) <- 1:n.ahead
-        } else ans2 <- NULL
-        ret[[i]] <- list(`Forecasts and SDs` = ans, `Bootstrap Replicates` = B, `Bootstrap Predictions and Intervals` = ans2)
-        if (B == 0)
-            ret[[i]][[2]] <- ret[[i]][[3]] <- NULL
+
+        ret[[i]] <- list(`Forecasts and SDs` = ans)
     }
     names(ret) <- nam
 
@@ -187,8 +179,8 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
         }
 
 
-        coeff <- c(phi, theta, phiseas, thetaseas, dfrac, H, alpha, dfs, Hs, alphas, muHat,
-                   omega, delta, logl, sigma2)
+        coeff <- c(phi, theta, phiseas, thetaseas, dfrac, H, alpha, dfs, Hs, alphas,
+                   omega, delta, muHat, logl, sigma2)
 
         if (length(phi) > 1)
             coeff <- c(coeff, phip)
@@ -233,6 +225,8 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
             sep = "")
     if (any(is.na(coeffs)))
         cat("NAs come from singular Hessians\n")
+    if(x$differencing)
+      cat("Note that the fitted mean/zbar is of the differenced series.")
     invisible(x)
 }
 
@@ -253,10 +247,10 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1))
+#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
 #'
 #' fit
 #'
@@ -308,10 +302,10 @@ fitted.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1))
+#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
 #'
 #' fit
 #'
@@ -378,10 +372,10 @@ residuals.arfima <- resid.arfima <- function(object, reg = FALSE, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' data(tmpyr)
 #'
-#' fit <- arfima(tmpyr, order = c(1, 0, 1))
+#' fit <- arfima(tmpyr, order = c(1, 0, 1), back=T)
 #' fit
 #'
 #' summary(fit)
@@ -414,7 +408,7 @@ summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...
     for (i in 1:m) {
         ses <- sqrt(diag(vcovs[[i]]$observed))
         if ((!is.logical(dmean)) || (!dmean))
-            ses <- c(NA, ses)
+            ses <- c(ses, NA)
         if (!vcovs$warnH && !vcovs$warnX)
             tses <- c(sqrt(diag(vcovs[[i]]$expected)), NA) else {
             tses <- NULL
@@ -463,10 +457,10 @@ summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(54678)
 #' sim <- arfima.sim(1000, model = list(phi = 0.9, H = 0.3))
-#' fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g")
+#' fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=T)
 #' summary(fit)
 #' }
 #'
@@ -596,10 +590,10 @@ logLik.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1))
+#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
 #'
 #' fit
 #' coef(fit)
@@ -686,6 +680,19 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
             if (length(alphas) > 0)
                 nm <- c(nm, paste("alpha.", period, sep = ""))
 
+
+            if(ans$strReg){
+              nm <- c(nm, names(xreglist$omega))
+            }
+            else {
+              if (length(omega) > 0) {
+                  for (j in 1:length(s)) nm <- c(nm, names(xreglist$omega[[j]]))
+              }
+              if (length(delta) > 0) {
+                  for (j in 1:length(r)) nm <- c(nm, names(xreglist$delta[[j]]))
+              }
+
+            }
             if (itmean) {
               nm <- c(nm, "It. Fit. mean")
             } else  {
@@ -699,18 +706,6 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
                     nm <- c(nm, ans$intname)
                 }
               else nm <- c(nm, "Set mean")
-            }
-            if(ans$strReg){
-              nm <- c(nm, names(xreglist$omega))
-            }
-            else {
-              if (length(omega) > 0) {
-                  for (j in 1:length(s)) nm <- c(nm, names(xreglist$omega[[j]]))
-              }
-              if (length(delta) > 0) {
-                  for (j in 1:length(r)) nm <- c(nm, names(xreglist$delta[[j]]))
-              }
-
             }
 
         }
@@ -749,12 +744,12 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(34577)
 #' sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
-#' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2)
-#' fit2 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "g")
-#' fit3 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "h")
+#' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=T)
+#' fit2 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "g", back=T)
+#' fit3 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "h", back=T)
 #'
 #' AIC(fit1)
 #' AIC(fit2)
@@ -811,12 +806,12 @@ BIC.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, phi = .8, theta = -0.5))
-#' fit1 <- arfima(sim, order = c(1, 0, 1))
-#' fit2 <- arfima(sim, order = c(1, 0, 1), lmodel = "g")
-#' fit3 <- arfima(sim, order = c(1, 0, 1), lmodel = "h")
+#' fit1 <- arfima(sim, order = c(1, 0, 1), back=T)
+#' fit2 <- arfima(sim, order = c(1, 0, 1), lmodel = "g", back=T)
+#' fit3 <- arfima(sim, order = c(1, 0, 1), lmodel = "h", back=T)
 #' fit1
 #' fit2
 #' fit3

@@ -32,16 +32,15 @@ modes to the surface.
 }
 \examples{
 
-\dontrun{
+\donttest{
 data(tmpyr)
 
-fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE)
+fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE, back=T)
 fit
-https://www.theatlantic.com/magazine/archive/2017/01/how-to-sleep/508781/
 ##suspect that fourth mode may be spurious, even though not close to a boundary
 ##may be an induced mode from the optimization of the mean
 
-fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = FALSE)
+fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = FALSE, back=T)
 fit
 
 ##perhaps so
@@ -49,10 +48,10 @@ fit
 
 plot(tacvf(fit), maxlag = 30, tacf = TRUE)
 
-fit1 <- arfima(tmpyr, order = c(1, 0, 0), dmean = TRUE)
+fit1 <- arfima(tmpyr, order = c(1, 0, 0), dmean = TRUE, back=T)
 fit1
 
-fit2 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE)
+fit2 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE, back=T)
 fit2  ##still bimodal.  Second mode may or may not be spurious.
 
 fit3 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE, whichopt = 1, numeach = c(3, 3))

@@ -45,10 +45,6 @@
 #' \code{\link{fitted.arfima}} - Extracts the fitted values from a
 #' \code{arfima} object
 #'
-#' \code{\link{Boot}} and \code{\link{Boot.arfima}} - Computes (a) parametric
-#' bootstrap replicate(s) from the fitted \code{arfima} object.  \code{Boot} is
-#' a generic function while \code{Boot.arfima} is the method for \code{arfima}
-#' objects.
 #'
 #' \code{\link{tacvfARFIMA}} - Computes the theoretical autocovariance function
 #' of a supplied model.  The model is checked for stationarity and
@@ -71,17 +67,14 @@
 #' Capable of exact minimum mean squared error predictions even with integer d
 #' > 0 and/or integer dseas > 0. Does not include transfer function/leading
 #' indicators as of yet.  Returns a \code{predarfima} object, which is composed
-#' of: predictions, standard errors (exact and, if possible, limiting), as well
-#' as parametric bootstrap prediction intervals and predictions if requested.
+#' of: predictions, and standard errors (exact and, if possible, limiting).
 #'
 #' \code{\link{print.predarfima}} - Prints the relevant output from a
-#' \code{predarfima} object: the predictions, their standard deviations, and if
-#' part of the object, the lower and upper bootstrap prediction intervals.
+#' \code{predarfima} object: the predictions and their standard deviations.
 #'
 #' \code{\link{plot.predarfima}} - Plots a \code{predarfima} object.  This
-#' includes the original time series, the forecasts, the standard 95\%
-#' prediction intervals (exact and, if available, limiting) as well as the
-#' bootstrap lower and upper intervals and predictions.
+#' includes the original time series, the forecasts and as default the
+#'  standard 95\% prediction intervals (exact and, if available, limiting).
 #'
 #' \code{\link{logLik.arfima}}, \code{\link{AIC.arfima}},
 #' \code{\link{BIC.arfima}} - Extracts the requested values from an
@@ -114,10 +107,10 @@
 #' @keywords package
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1))
+#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
 #'
 #' fit
 #'
@@ -275,16 +268,15 @@ NULL
 #' @keywords datasets
 #' @examples
 #'
-#' \dontrun{
+#' \donttest{
 #' data(tmpyr)
 #'
-#' fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE)
+#' fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE, back=T)
 #' fit
-#' https://www.theatlantic.com/magazine/archive/2017/01/how-to-sleep/508781/
 #' ##suspect that fourth mode may be spurious, even though not close to a boundary
 #' ##may be an induced mode from the optimization of the mean
 #'
-#' fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = FALSE)
+#' fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = FALSE, back=T)
 #' fit
 #'
 #' ##perhaps so
@@ -292,10 +284,10 @@ NULL
 #'
 #' plot(tacvf(fit), maxlag = 30, tacf = TRUE)
 #'
-#' fit1 <- arfima(tmpyr, order = c(1, 0, 0), dmean = TRUE)
+#' fit1 <- arfima(tmpyr, order = c(1, 0, 0), dmean = TRUE, back=T)
 #' fit1
 #'
-#' fit2 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE)
+#' fit2 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE, back=T)
 #' fit2  ##still bimodal.  Second mode may or may not be spurious.
 #'
 #' fit3 <- arfima(tmpyr, order = c(1, 0, 0), dmean = FALSE, whichopt = 1, numeach = c(3, 3))

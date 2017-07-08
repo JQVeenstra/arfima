@@ -5,9 +5,9 @@
 \title{Predicts from a fitted object.}
 \usage{
 \method{predict}{arfima}(object, n.ahead = 1, prop.use = "default",
-  newxreg = NULL, predint = 0.95, bootpred = TRUE, B = if (bootpred)
-  1000 else 0, exact = c("default", T, F), seed = NA, setmuhat0 = FALSE,
-  cpus = 1, trend = NULL, n.use = NULL, xreg = NULL, ...)
+  newxreg = NULL, predint = 0.95, exact = c("default", T, F),
+  setmuhat0 = FALSE, cpus = 1, trend = NULL, n.use = NULL,
+  xreg = NULL, ...)
 }
 \arguments{
 \item{object}{A fitted \code{arfima} object}
@@ -21,13 +21,8 @@ of the series length and 1000.  Overriden by \code{n.use}.}
 
 \item{newxreg}{If a regression fit, the new regressors}
 
-\item{predint}{For bootstrap prediction intervals, the percentiles to use}
-
-\item{bootpred}{Whether or not to generate bootstrap predictions and
-intervals.  Uses a bootstrap of the residuals as innovations to
-\code{\link{arfima.sim}}.}
-
-\item{B}{The number of bootstrap replicates to perform}
+\item{predint}{The percentile to use for prediction intervals assuming normal
+deviations.}
 
 \item{exact}{Controls whether exact (based on the theoretical autocovariance
 matrix) prediction variances are calculated (which is recommended), as well
@@ -36,9 +31,6 @@ differenced (which can take a fair amount of time if the length of the series
 used to predict is large).  Defaults to the string "default", which is
 \code{TRUE} for the first and \code{FALSE} for the second.  A Boolean value
 (\code{TRUE} or \code{FALSE}) will set both to this value.}
-
-\item{seed}{The seed or seeds (if multiple, must have length equal to
-\code{B}) for the bootstrap replicates}
 
 \item{setmuhat0}{Experimental. Sets muhat equal to zero}
 
@@ -60,15 +52,14 @@ prediction
 }
 \description{
 Performs prediction of a fitted \code{arfima} object. Includes prediction
-for each mode, bootstrap predictions and intervals, and exact and limiting
-prediction error standard deviations.
+for each mode and exact and limiting prediction error standard deviations.
 }
 \examples{
 
-\dontrun{
+\donttest{
 set.seed(82365)
 sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
-fit <- arfima(sim, order = c(0, 1, 1))
+fit <- arfima(sim, order = c(0, 1, 1), back=T)
 fit
 pred <- predict(fit, n.ahead = 5)
 pred

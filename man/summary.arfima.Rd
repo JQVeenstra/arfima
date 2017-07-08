@@ -26,10 +26,10 @@ more, for each mode.
 }
 \examples{
 
-\dontrun{
+\donttest{
 data(tmpyr)
 
-fit <- arfima(tmpyr, order = c(1, 0, 1))
+fit <- arfima(tmpyr, order = c(1, 0, 1), back=T)
 fit
 
 summary(fit)

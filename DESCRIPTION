@@ -1,12 +1,10 @@
 Package: arfima
-Version: 1.4-0
-Date: 2017-05-20
+Version: 1.5-0
+Date: 2017-07-07
 Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
 Authors@R: c(person("JQ (Justin)", "Veenstra", role = c("aut", "cre"),
 		     email = "jqveenstra@gmail.com"),
 	      person("A.I.", "McLeod", role = "aut"))
-Author: Justin Q. Veenstra [aut, cre],
-    A.I. McLeod [aut]
 Maintainer: JQ (Justin) Veenstra <jqveenstra@gmail.com>
 Depends:
     R (>= 3.0.0), ltsa
