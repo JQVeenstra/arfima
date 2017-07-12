@@ -2,6 +2,9 @@
 #'
 #' Performs prediction of a fitted \code{arfima} object. Includes prediction
 #' for each mode and exact and limiting prediction error standard deviations.
+#' \strong{NOTE:  the standard errors in beta are currently not taken into
+#' account in the prediction intervals shown.  This will be updated as soon
+#' as possible.}
 #'
 #'
 #' @param object A fitted \code{arfima} object
@@ -45,7 +48,34 @@
 #' fit
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
-#' plot(pred)
+#' plot(pred, numback=50)
+#' #Predictions aren't really different due to the
+#' #series.  Let's see what happens when we regress!
+#'
+#' set.seed(23524)
+#' #Forecast 5 ahead as before
+#' #Note that we need to integrate the regressors, since time series regression
+#' #usually assumes that regressors are of the same order as the series.
+#' n.fore <- 5
+#' X <- matrix(rnorm(3000+3*n.fore), ncol = 3)
+#' X <- apply(X, 2, cumsum)
+#' Xnew <- X[1001:1005,]
+#' X <- X[1:1000,]
+#' beta <- matrix(c(2, -.4, 6), ncol = 1)
+#' simX <- sim + as.vector(X%*%beta)
+#' fitX <- arfima(simX, order = c(0, 1, 1), xreg = X, back=T)
+#' fitX
+#' #Let's compare predictions.
+#' predX <- predict(fitX, n.ahead = n.fore, xreg = Xnew)
+#' predX
+#' plot(predX, numback = 50)
+#' #With the mode we know is really there, it looks better.
+#' fitX <- removeMode(fitX, 2)
+#' predXnew <- predict(fitX, n.ahead = n.fore, xreg = Xnew)
+#' predXnew
+#' plot(predXnew, numback=50)
+#'
+#' #
 #' }
 #'
 predict.arfima <- function(
@@ -105,9 +135,11 @@ predict.arfima <- function(
 
 
     nrxreg <- myNROW(newxreg)
-
-    if (nrxreg > 0 && !object$strReg)
-      stop("Only predict with regular regression at this time (no transfer functions)")
+    if (nrxreg > 0)
+      if(is.null(object$xreg))
+        stop("Can't predict with (new)xreg when no xreg in fit")
+      else if(!object$strReg)
+        stop("Only predict with regular regression at this time (no transfer functions)")
 
     if (nrxreg > 0 && is.data.frame(newxreg)) {
       namexreg <- setdiff(object$namexreg, "Intercept")
@@ -134,11 +166,7 @@ predict.arfima <- function(
     m <- length(object$modes)
     tacvfs <- tacvf(obj = object, xmaxlag = n.ahead, forPred = TRUE, n.ahead = n.ahead +
         1)
-
-    if (nrxreg)
-        resids <- resid(object)
-    if (nrxreg) {
-        newXreg <- newxreg
+    if (nrxreg > 0) {
         res <- resid(object, reg = TRUE)
         for (i in 1:m) res[[i]] <- as.vector(res[[i]])
         y <- NULL
@@ -167,10 +195,12 @@ predict.arfima <- function(
             if (dseas > 0)
                 zy <- diff(zy, differences = dseas, lag = period)
             if (nrxreg) {
-                if (dint > 0)
-                  Xreg <- diff(Xreg, differences = dint)
-                if (dseas > 0)
-                  Xreg <- diff(Xreg, differences = dseas, lag = period)
+              xreginit <- object$xreg[icap,]
+              newxreg <- rbind(xreginit, newxreg)
+              if (dint > 0)
+                newxreg <- diff(newxreg, differences = dint)
+              if (dseas > 0)
+                newxreg <- diff(newxreg, differences = dseas, lag = period)
             }
         } else {
             icap <- 0
@@ -179,7 +209,6 @@ predict.arfima <- function(
 
         nz <- length(zy)
         startzy <- if(nz-n.use<=1) 1 else nz-n.use
-
         znew <- predictWork(y = zy[startzy:nz], r = tacvfs[[i + 1]]$tacvf, dint = dint, dseas = dseas,
             period = period, muHat = muHat, n.ahead = n.ahead, trex = trex, exact=exact)
 
@@ -196,7 +225,7 @@ predict.arfima <- function(
 
 
         if (nrxreg) {
-            meanwx <- meanwx + as.numeric(newXreg %*% object$modes[[i]]$omega)
+            meanwx <- meanwx + as.numeric(newxreg %*% object$modes[[i]]$omega)
         }
 
         znew$Forecast <- znew$Forecast + meanwx
@@ -226,7 +255,7 @@ predict.arfima <- function(
     preds$limiting <- limiting
     preds$predint <- predint
     preds$name <- deparse(substitute(object))
-
+    preds$m <- m
     class(preds) <- "predarfima"
     preds
 }
@@ -300,7 +329,6 @@ Z <- function(l, d, ds, s) {
 
 print.predARFIMA <- function(x, digits = max(6, getOption("digits") - 3), ...) {
     n <- length(x$z)
-
     forecasts <- x$Forecast
     exactSD <- x$exactSD
     approxSD <- x$approxSD

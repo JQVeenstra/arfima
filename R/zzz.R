@@ -1,16 +1,16 @@
 arfima_const_predvarnum <- 5 #7 with bootstrap
 
-message1.5.0 = "Note that the arfima package has new defaults starting with
+message1.5.1 = "Note that the arfima package has new defaults starting with
 1.4-0: type arfimachanges() for a list, as well as some other notes.
 NOTE: some of these are quite important!"
 
 
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(message1.5.0)
+  packageStartupMessage(message1.5.1)
 }
 
 
-changes1.5.0 = "
+changes1.5.1 = "
 Changes in arfima starting in 1.4-0:
   1. arfima() now defaults to searching for only one mode:
     previously it had, as default, for p time series parameters,
@@ -47,11 +47,15 @@ Changes in arfima starting in 1.5-0:
   2.  As a consequence of the above, there are no longer bootstrap predictions;
     this is actually the major issue I need to track down above.
 
+Note: on prediction intervals with xreg, the intervals are only with respect to
+the time series itself.  I will update to include standard errors on beta
+as soon as I am able.
+
 Finally, please note that in the next major version of the package, there will
 be multiple other changes, some breaking backwards compatibility.
 "
 #' Prints changes to the package since the last update.  Started in 1.4-0
 arfimachanges <- function()
-  cat(changes1.5.0)
+  cat(changes1.5.1)
 
 

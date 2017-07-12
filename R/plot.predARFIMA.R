@@ -37,6 +37,8 @@
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
 #' plot(pred)
+#' #Let's look at more context
+#' plot(pred, numback = 50)
 #' }
 #'
 "plot.predarfima" <- function(x, xlab = NULL, ylab = NULL, main = NULL, ylim = NULL, numback = 5,
@@ -52,7 +54,7 @@
         ylab <- "Mode "
     if (length(main) == 0)
         main <- paste("Time Series and Predictions of ", x$name, sep = "")
-    m <- length(x) - arfima_const_predvarnum
+    m <- x$m
     n.ahead <- length(as.vector(x[[1]]$Forecast))
     seed <- x$seed
     limiting <- x$limiting

@@ -1093,7 +1093,7 @@
             qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = weeded, getHess = getHess,
             numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
             call = match.call(), flag0 = flag0, numeach = numeach, strReg = straightRegress,
-            regOnly = regOnly, intindex = intindex, intname = intname)
+            regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg)
     }
 
     class(ans) <- "arfima"

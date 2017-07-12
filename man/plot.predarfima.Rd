@@ -51,6 +51,8 @@ fit
 pred <- predict(fit, n.ahead = 5)
 pred
 plot(pred)
+#Let's look at more context
+plot(pred, numback = 50)
 }
 
 }

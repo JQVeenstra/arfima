@@ -78,7 +78,7 @@ print.predarfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
     limiting <- x$limiting
 
     predint <- x$predint
-
+    m <- x$m
     ret <- vector("list", m)
     nam <- paste("Mode", 1:m)
     for (i in 1:m) {
