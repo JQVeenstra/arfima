@@ -195,7 +195,8 @@ predict.arfima <- function(
             if (dseas > 0)
                 zy <- diff(zy, differences = dseas, lag = period)
             if (nrxreg) {
-              xreginit <- object$xreg[icap,]
+              newxreg <- as.matrix(newxreg)
+              xreginit <- object$xreg[(nz - icap + 1):nz,]
               newxreg <- rbind(xreginit, newxreg)
               if (dint > 0)
                 newxreg <- diff(newxreg, differences = dint)

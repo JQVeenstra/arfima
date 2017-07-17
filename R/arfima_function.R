@@ -349,7 +349,7 @@
             #cat("note: transfer functions do not work with dynamic mean:  setting dmean to FALSE\n")
             dmean <- FALSE
         }
-        numvarreg <- sum(s) + sum(r)#333 + if(is.logical(dmean)&&dmean) 1 else 0
+        numvarreg <- sum(s) + sum(r)
         regeach <- if(straightRegress) 1 else reglist$numeach
         if (length(regeach) == 0)
             regeach <- 1
