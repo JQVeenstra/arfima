@@ -309,7 +309,6 @@
             } else stop("invalid regpar type")
 
         }
-
         xreg <- as.matrix(xreg)
 
         if (length(constantInds) > 0) {
@@ -614,7 +613,7 @@
 
     flag0 <- regOnly <- FALSE
     if (p + q + numeach[2] + pseas + qseas + snumeach[2] == 0) {
-      if(regeach>1)
+      if(is.null(xreg))
         flag0 <- TRUE
       else
         regOnly <- TRUE
@@ -640,6 +639,10 @@
 
 
     if (flag0) {
+        if(sum(numeach)>2||sum(seasonal$numeach)>2||
+           (!is.null(numrand)) && numrand>0)
+          warning('With only the mean to be fit, since the problem is convex,
+                  it has a unique minimum and thus only one fit will be performed.')
         if ((is.logical(dmean) && dmean) || itmean) {
             fun <- function(m) {
                 lARFIMA(y - m)
@@ -660,6 +663,16 @@
         allpars[[1]]$loglik <- res$objective
         allpars[[1]]$hessian <- res$hess
         allpars[[1]]$se <- res$se
+        allpars[[1]]$phi <- allpars[[1]]$theta <- allpars[[1]]$phiseas <-
+          allpars[[1]]$thetaseas <- allpars[[1]]$dfrac <- allpars[[1]]$dfs <-
+          allpars[[1]]$phip <- allpars[[1]]$thetap <- allpars[[1]]$H <-
+          allpars[[1]]$alpha <- allpars[[1]]$alphas <- allpars[[1]]$delta <-
+          allpars[[1]]$omega <- allpars[[1]]$Hs <- numeric(0)
+        allpars[[1]]$pars <-
+          c(allpars[[1]]$phi, allpars[[1]]$theta, allpars[[1]]$phiseas,
+            allpars[[1]]$thetaseas, allpars[[1]]$dfrac, allpars[[1]]$H,
+            allpars[[1]]$alpha, allpars[[1]]$dfs, allpars[[1]]$Hs,
+            allpars[[1]]$alphas, allpars[[1]]$delta, allpars[[1]]$omega)
         sigma2muse <- getsigma2muhat(y - allpars[[1]]$muHat)
         allpars[[1]]$sigma2 <- sigma2muse
         rr <- tacvfARFIMA(maxlag = length(y) - 1)
@@ -668,10 +681,16 @@
         allpars[[1]]$fitted <- y - allpars[[1]]$muHat - res
         class(allpars[[1]]) <- "ARFIMA"
         ans <- list(z = z, differencing = differencing, dint = dint, dseas = dseas, period = period,
-            modes = allpars, dmean = dmean, itmean = itmean, p = p, q = q, pseas = pseas,
-            qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = TRUE, getHess = getHess,
-            numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
-            call = match.call(), flag0 = flag0)
+                    modes = allpars, dmean = dmean, itmean = itmean, p = p, q = q, pseas = pseas,
+                    qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = TRUE, getHess = getHess,
+                    numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
+                    call = match.call(), flag0 = flag0, numeach = numeach, strReg = F,
+                    regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg)
+        # ans <- list(z = z, differencing = differencing, dint = dint, dseas = dseas, period = period,
+        #     modes = allpars, dmean = dmean, itmean = itmean, p = p, q = q, pseas = pseas,
+        #     qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = TRUE, getHess = getHess,
+        #     numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
+        #     call = match.call(), flag0 = flag0)
     } else {
       num <- if (!rand)
         numtries else numrand
@@ -683,7 +702,6 @@
           num <- 8
         }
         starts <- matrix(0, nrow = num, ncol = numvars)
-
         pl1 <- 0
         if (!is.na(seed) && !is.null(seed))
           set.seed(seed) else warning("Random start seed not selected:  results may not be reproducible")
@@ -695,14 +713,19 @@
         if (lmodel != "n") {
           pl1 <- 1
           if (lmodel == "d")
-            starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = -1, max = 0.5) else if (lmodel == "g")
-              starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = 0, max = 1) else starts[, (1 + p + q + pseas + qseas)] <- runif(num, min = 0, max = 3)
+            starts[, (1 + p + q + pseas + qseas)] <- runif(1, min = -1, max = 0.5)
+          else if (lmodel == "g")
+            starts[, (1 + p + q + pseas + qseas)] <- runif(1, min = 0, max = 1)
+          else
+            starts[, (1 + p + q + pseas + qseas)] <- runif(1, min = 0, max = 3)
         }
         if (slmodel != "n") {
           if (slmodel == "d")
-            starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = -1, max = 0.5) else if (slmodel == "g")
-              starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = 0, max = 1) else starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(num, min = 0,
-                                                                                                                                                    max = 3)
+            starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(1, min = -1, max = 0.5)
+          else if (slmodel == "g")
+            starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(1, min = 0, max = 1)
+          else
+            starts[, (1 + p + q + pl1 + pseas + qseas)] <- runif(1, min = 0, max = 3)
         }
         if (!is.null(xreg)) {
           if(!straightRegress) {
@@ -711,7 +734,7 @@
                                                                                       max = regmax), nrow = num)
           }
           else if(is.logical(dmean)&&dmean) {
-            coeffs <- lsfit(xreg, y)$coef[c(2:ncol(xreg), 1)]
+            coeffs <- lsfit(xreg, y)$coef
             for(ii in 1:numvarreg) starts[, (1 + p + q + pl1 + pseas + qseas+ii)] <- coeffs
           }
           else {
@@ -719,8 +742,6 @@
             for(ii in 1:numvarreg) starts[, (1 + p + q + pl1 + pseas + qseas+ii)] <- coeffs
           }
         }
-        else if(is.logical(dmean) && dmean)
-          starts[, (1 + p + q + pl1 + pseas + qseas+1)] <- mean(y)
 
 
       } else if (num > 1 && !startflag) {
@@ -1154,12 +1175,23 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' @export weed
 weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025, eps3 = 0.01,
     adapt = TRUE, pn = 2) {
-
     if (class(ans) != "arfima")
         stop("weed only defined for arfima objects")
 
-    if (ans$flag0 || ans$regOnly)
-        return(ans)
+    allpars <- ans$modes
+
+    if(length(allpars)==1) {
+      ans$weeded <- TRUE
+      return(ans)
+    }
+
+    if (ans$flag0){
+      stopifnot(length(allpars[[1]]$pars)==0)
+      allpars <- allpars[[1]]
+      ans$modes <- allpars
+      ans$weeded <- TRUE
+      return(ans)
+    }
 
     if (length(pn) == 0 || pn <= 0 || !is.finite(pn)) {
         warning("invalid pn in weed: setting to 2")
@@ -1192,12 +1224,16 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
     qseas <- ans$qseas
     lmodel <- ans$lmodel
     slmodel <- ans$slmodel
-    allpars <- ans$modes
+
     numvars <- p + q + qseas + pseas + if (lmodel != "n")
         1 else 0
     numvars <- numvars + if (slmodel != "n")
         1 else 0
     numvars <- numvars + sum(ans$r) + sum(ans$s)
+
+    if(numvars==0) {
+      stop("Should not get here.  Please contact the package maintainer.")
+    }
 
     if (adapt)
         eps2 <- (1 + eps2)^numvars - 1
@@ -1246,7 +1282,7 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
         modes[[1]] <- modes1[[1]]
 
         flag <- NULL
-        if (num > 1)
+        if (!ans$regOnly && num > 1) {
             for (i in 2:num) {
                 flag <- NULL
                 for (j in 1:length(modes)) {
@@ -1257,119 +1293,66 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
                   modes[[length(modes) + 1]] <- modes1[[i]]
                 }
             }
-
+        }
+        else if(num>1) {
+          for (i in 2:num) {
+            flag <- NULL
+            for (j in 1:length(modes)) {
+              flag <- c(flag, pcircle(x1 = modes1[[i]]$omega, x2 = modes[[j]]$omega,
+                                      rad = eps2, pn = pn))
+            }
+            if (all(flag)) {
+              modes[[length(modes) + 1]] <- modes1[[i]]
+            }
+          }
+        }
     }
-
 
     wall <- inds <- vector("list", numvars * 2)
-    pl1 <- 0
+    pl1 <- p2  <- 0
+    arma_varnum <- p + q + pseas + qseas
     for (i in 1:numvars) {
-        if (i <= p + q + pseas + qseas) {
-            minner <- -1
-            maxxer <- 1
-        } else if (lmodel != "n" && !pl1) {
-            pl1 <- 1
-            if (lmodel == "d") {
-                minner <- -1
-                maxxer <- 0.5
-            } else if (lmodel == "g") {
-                minner <- 0
-                maxxer <- 1
-            } else if (lmodel == "h") {
-                minner <- 0
-                maxxer <- 3
-            }
-        } else {
-            if (slmodel == "d") {
-                minner <- -1
-                maxxer <- 0.5
-            } else if (slmodel == "g") {
-                minner <- 0
-                maxxer <- 1
-            } else if (slmodel == "h") {
-                minner <- 0
-                maxxer <- 3
-            }
+      if(ans$regOnly) break
+      if (i <= arma_varnum) {
+        minner = -1
+        maxxer = 1
+      } else if (lmodel != "n" && !pl1) {
+        pl1 <- 1
+        if (lmodel == "d") {
+          minner = -1
+          maxxer = 0.5
+        } else if (lmodel == "g") {
+          minner = 0
+          maxxer = 1
+        } else if (lmodel == "h") {
+          minner = 0
+          maxxer = 3
         }
-        for (j in 1:length(modes)) {
-            wall[[2 * i - 1]] <- c(wall[[2 * i - 1]], abs(maxxer - modes[[j]]$parsp[i]) <
-                eps3)
-            wall[[2 * i]] <- c(wall[[2 * i]], abs(minner - modes[[j]]$parsp[i]) < eps3)
+      } else {
+        if (slmodel == "d") {
+          minner = -1
+          maxxer = 0.5
+        } else if (slmodel == "g") {
+          minner = 0
+          maxxer = 1
+        } else if (slmodel == "h") {
+          minner = 0
+          maxxer = 3
         }
-        inds[[2 * i - 1]] <- which(wall[[2 * i - 1]])
-        inds[[2 * i]] <- which(wall[[2 * i]])
-    }
-    if (walls) {
-
-        index <- NULL
-        index2 <- NULL
-        for (i in 1:(numvars * 2)) {
-            index <- c(index, inds[[i]][1])
-            index2 <- c(index2, inds[[i]])
-        }
-        no_wall <- setdiff(1:length(modes), index2)
-
-        un_modes <- unique(na.omit(c(index, no_wall)))
-        numun <- length(un_modes)
-        numcut <- length(modes) - numun
-        modes1 <- vector("list", numun)
-
-        for (i in 1:numun) {
-            modes1[[i]] <- modes[[un_modes[i]]]
-        }
-
-        logl <- rep(0, numun)
-        for (i in 1:numun) logl[i] <- modes1[[i]]$loglik
-
-        ord <- order(logl, decreasing = TRUE)
-
-        modes <- modes1[ord]
-
-        walls <- inds <- vector("list", numvars * 2)
-        pl1 <- 0
-        for (i in 1:numvars) {
-            if (i <= p + q + pseas + qseas) {
-                minner = -1
-                maxxer = 1
-            } else if (lmodel != "n" && !pl1) {
-                pl1 <- 1
-                if (lmodel == "d") {
-                  minner = -1
-                  maxxer = 0.5
-                } else if (lmodel == "g") {
-                  minner = 0
-                  maxxer = 1
-                } else if (lmodel == "h") {
-                  minner = 0
-                  maxxer = 3
-                }
-            } else {
-                if (slmodel == "d") {
-                  minner = -1
-                  maxxer = 0.5
-                } else if (slmodel == "g") {
-                  minner = 0
-                  maxxer = 1
-                } else if (slmodel == "h") {
-                  minner = 0
-                  maxxer = 3
-                }
-            }
-            for (j in 1:length(modes)) {
-                wall[[2 * i - 1]] <- c(wall[[2 * i - 1]], abs(maxxer - modes[[j]]$parsp[i]) <
-                  eps3)
-                wall[[2 * i]] <- c(wall[[2 * i]], abs(minner - modes[[j]]$parsp[i]) < eps3)
-            }
-            inds[[2 * i - 1]] <- which(wall[[2 * i - 1]])
-            inds[[2 * i]] <- which(wall[[2 * i]])
-        }
-    } else {
-        numcut <- 0
+      }
+      for (j in 1:length(modes)) {
+        wall[[2 * i - 1]] <- c(wall[[2 * i - 1]], abs(maxxer - modes[[j]]$parsp[i]) <
+                                 eps3)
+        wall[[2 * i]] <- c(wall[[2 * i]], abs(minner - modes[[j]]$parsp[i]) < eps3)
+      }
+      inds[[2 * i - 1]] <- which(wall[[2 * i - 1]])
+      inds[[2 * i]] <- which(wall[[2 * i]])
     }
 
-    index <- NA
+    index <- numeric(0)
     for (i in 1:(2 * numvars)) index <- c(index, inds[[i]])
     index <- unique(index)
+    numcut <- length(ans$index) - length(index)
     ans1 <- list(z = ans$z, differencing = ans$differencing, dint = ans$dint, dseas = ans$dseas,
         period = ans$period, modes = modes, dmean = ans$dmean, itmean = ans$itmean, getHess = ans$getHess,
         p = p, q = q, pseas = pseas, qseas = qseas, lmodel = lmodel, slmodel = slmodel,

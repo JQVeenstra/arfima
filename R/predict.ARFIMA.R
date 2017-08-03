@@ -197,11 +197,13 @@ predict.arfima <- function(
             if (nrxreg) {
               newxreg <- as.matrix(newxreg)
               xreginit <- object$xreg[(nz - icap + 1):nz,]
-              newxreg <- rbind(xreginit, newxreg)
-              if (dint > 0)
-                newxreg <- diff(newxreg, differences = dint)
-              if (dseas > 0)
-                newxreg <- diff(newxreg, differences = dseas, lag = period)
+              if(icap>0) {
+                newxreg <- rbind(xreginit, newxreg)
+                if (dint > 0)
+                  newxreg <- diff(newxreg, differences = dint)
+                if (dseas > 0)
+                  newxreg <- diff(newxreg, differences = dseas, lag = period)
+              }
             }
         } else {
             icap <- 0
@@ -234,6 +236,8 @@ predict.arfima <- function(
             znew$Forecast <- integ(z = znew$Forecast, zinit = zinit, dint = dint, dseas = dseas,
                 period = period)
             znew$Forecast <- znew$Forecast[-c(1:icap)]
+            lastpoint <- rep(tail(object$z, 1), length(znew$Forecast))
+            znew$Forecast <- znew$Forecast+lastpoint
         }
 
 

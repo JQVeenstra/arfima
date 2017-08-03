@@ -1,17 +1,22 @@
 Package: arfima
-Version: 1.5-2
+Version: 1.6-0
 Date: 2017-07-17
 Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
-Authors@R: c(person("JQ (Justin)", "Veenstra", role = c("aut", "cre"),
-		     email = "jqveenstra@gmail.com"),
-	      person("A.I.", "McLeod", role = "aut"))
+Author: JQ (Justin) Veenstra [aut, cre], A.I. McLeod [aut]
 Maintainer: JQ (Justin) Veenstra <jqveenstra@gmail.com>
 Depends:
     R (>= 3.0.0), ltsa
 Imports:
     parallel
-Description: Simulates, fits, and predicts long-memory and anti-persistent time
-    series, possibly mixed with ARMA, regression, transfer-function components.
+Description: Simulates, fits, and predicts long-memory and anti-persistent 
+    time series, possibly mixed with ARMA, regression, transfer-function
+    components.
     Exact methods (MLE, forecasting, simulation) are used.
+    Bug reports should be done via GitHub (at 
+    https://github.com/JQVeenstra/arfima) and note that due to the package 
+    changing fairly often (due to both bug reports and additions), the most 
+    up-to-date package will be kept at GitHub, and CRAN's version will be 
+    updated less often.  If you wish to use the latest version of   
+    this package, you can use devtools to install it.
 License: MIT + file LICENSE
 RoxygenNote: 6.0.1
