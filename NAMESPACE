@@ -1,6 +1,7 @@
 useDynLib(arfima, .registration=TRUE)
 import(ltsa)
 import(parallel)
+importFrom("utils", "tail")
 importFrom("graphics", "layout", "legend", "lines", "par", "plot", "plot.default", "text")
 importFrom("stats", "AIC", "as.ts", "coef", "convolve", "fft", "is.ts","logLik", "na.omit", "nextn", "optim", "pnorm","printCoefmat", "qnorm", "resid", "rnorm", "runif","toeplitz", "ts", "vcov", "lsfit", "var")
 export(bestModes, arfima0, tacfplot, removeMode, tacvf, distance, weed, lARFIMA, lARFIMAwTF, tacvfARFIMA, IdentInvertQ, iARFIMA, arfima, arfima.sim, PacfToAR, ARToPacf, BIC, arfimachanges)

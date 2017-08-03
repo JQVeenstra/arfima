@@ -10,7 +10,7 @@ NOTE: some of these are quite important!"
 }
 
 
-changes1.6.0 = "
+changes1.6.1 = "
 Changes in arfima starting in 1.4-0:
   1. arfima() now defaults to searching for only one mode:
     previously it had, as default, for p time series parameters,
@@ -59,6 +59,6 @@ be multiple other changes, some breaking backwards compatibility.
 "
 #' Prints changes to the package since the last update.  Started in 1.4-0
 arfimachanges <- function()
-  cat(changes1.5.1)
+  cat(changes1.6.1)
 
 
