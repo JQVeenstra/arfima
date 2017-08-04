@@ -1,7 +1,7 @@
 Package: arfima
 Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
 Version: 1.6-1
-Date: 2017-08-03
+Date: 2017-08-04
 Author: JQ (Justin) Veenstra [aut, cre], A.I. McLeod [aut]
 Maintainer: JQ (Justin) Veenstra
 Depends: 
@@ -13,7 +13,7 @@ Description: Simulates, fits, and predicts long-memory and anti-persistent
 	components.
 	Exact methods (MLE, forecasting, simulation) are used.
 	Bug reports should be done via GitHub (at
-	https://github.com/JQVeenstra/arfima) and note that due to the package
+	<https://github.com/JQVeenstra/arfima>) and note that due to the package
 	changing fairly often (due to both bug reports and additions), the most
 	up-to-date package will be kept at GitHub, and CRAN's version will be
 	updated less often.  If you wish to use the latest version of
