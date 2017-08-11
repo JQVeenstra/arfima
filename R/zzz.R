@@ -10,7 +10,7 @@ NOTE: some of these are quite important!"
 }
 
 
-changes1.6.1 = "
+changes1.6.2 = "
 Changes in arfima starting in 1.4-0:
   1. arfima() now defaults to searching for only one mode:
     previously it had, as default, for p time series parameters,
@@ -49,6 +49,9 @@ Changes in arfima starting in 1.5-0:
 
 Changes in arfima starting in 1.6-0:
   1.  Prediction with integrated series and xreg has been fixed.
+Changes in arfima starting in 1.6-2:
+  1.  Prediction with integrated series without xreg has been fixed.  This bug was
+    created by the previous fix in 1.6-0 and 1.6-1.
 
 Note: on prediction intervals with xreg, the intervals are only with respect to
 the time series itself.  I will update to include standard errors on beta
@@ -59,6 +62,6 @@ be multiple other changes, some breaking backwards compatibility.
 "
 #' Prints changes to the package since the last update.  Started in 1.4-0
 arfimachanges <- function()
-  cat(changes1.6.1)
+  cat(changes1.6.2)
 
 
