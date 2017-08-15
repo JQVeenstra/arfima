@@ -225,7 +225,7 @@ predict.arfima <- function(
                 warning("trend is not the same length as n.ahead")
             meanwx <- trend[1:n.ahead]
         } else meanwx <- rep(0, n.ahead)
-
+        #print(meanwx)
 
         if (nrxreg) {
             meanwx <- meanwx + as.numeric(newxreg %*% object$modes[[i]]$omega)
@@ -233,11 +233,13 @@ predict.arfima <- function(
 
         znew$Forecast <- znew$Forecast + meanwx
         if (icap > 0) {
-            znew$Forecast <- integ(z = znew$Forecast, zinit = zinit, dint = dint, dseas = dseas,
-                period = period)
-            znew$Forecast <- znew$Forecast[-c(1:icap)]
+          znew$Forecast <- integ(z = znew$Forecast, zinit = zinit, dint = dint, dseas = dseas,
+                                 period = period)
+          znew$Forecast <- znew$Forecast[-c(1:icap)]
+          if(nrxreg) {
             lastpoint <- rep(tail(object$z, 1), length(znew$Forecast))
             znew$Forecast <- znew$Forecast+lastpoint
+          }
         }
 
 

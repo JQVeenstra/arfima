@@ -477,33 +477,127 @@
         arfixed <- fixed$phi
         mafixed <- fixed$theta
         fracfix <- fixed$frac
+        warnstring <- "Warning- in the fixed argument:"
+        if (length(arfixed) != p) {
+          warnstring <- paste0(warnstring, "\n phi is ", arfixed,
+                               " but p = ", p, " unfixing phi")
+          arfixed <- if (p > 0)
+            rep(NA, p) else numeric(0)
 
-        if (length(arfixed) != p)
-            arfixed <- if (p > 0)
-                rep(NA, p) else numeric(0)
-        if (length(mafixed) != q)
-            mafixed <- if (q > 0)
-                rep(NA, q) else numeric(0)
-        if (length(fracfix) != 1)
-            fracfix <- NA else fracfix <- fracfix
+        }
+        else if(p>0 && length(arfixed)==p&&any(!is.na(arfixed))) {
+          if(sum(is.na(arfixed))==0) {
+            if(!InvertibleQ(arfixed)) {
+              stop("phi parameters fixed at nonstationary parameters")
+            }
+          }
+        }
+
+        if (length(mafixed) != q) {
+          warnstring <- paste0(warnstring, "\n theta is ", mafixed,
+                               " but q = ", q, " unfixing theta")
+          mafixed <- if (q > 0)
+            rep(NA, q) else numeric(0)
+
+        }
+        else if(q>0 && length(mafixed)==q&&any(!is.na(mafixed))) {
+          if(sum(is.na(mafixed))==0) {
+            if(!InvertibleQ(mafixed)) {
+              stop("theta parameters fixed at noninvertible parameters")
+            }
+          }
+        }
+
+        if (!is.null(fracfix) && length(fracfix) != 1 && !is.na(fracfix)) {
+          warnstring <- paste0(warnstring, "\n fractional parameter is fixed greater",
+                               "\n than length 1, resetting fractional prameter ")
+          if(lmodel=="n") {
+            warnstring("\n lmodel == 'n' and fractional parameter fixed, resetting")
+            fracfix <- numeric(0)
+          }
+          else fracfix <- NA
+        }
         if (lmodel == "n")
             fracfix <- numeric(0)
+        if(lmodel!="n"&&(!is.null(fracfix)&&!is.na(fracfix))) {
+          fix_stop <- F
+          if(lmodel=="d") {
+            if(!InvertibleD(fracfix)) fix_stop <- T
+          }
+          else if(lmodel=="g") {
+            if(!InvertibleH(fracfix)) fix_stop <- T
+          }
+          else {
+            if(!InvertibleAlpha(fracfix)) fix_stop <- T
+          }
+          if(fix_stop){
+            stop("fractional parameter fixed at nonstationary/noninvertible value")
+          }
+
+        }
+
         fixx <- c(arfixed, mafixed)
         if (length(fixed$seasonal) > 0 && period > 0) {
-            sarfixed <- fixed$seasonal$phi
-            smafixed <- fixed$seasonal$theta
-            sfracfix <- fixed$seasonal$frac
-            if (length(sarfixed) != pseas)
-                sarfixed <- if (pseas > 0)
-                  rep(NA, pseas) else numeric(0)
-            if (length(smafixed) != qseas)
-                smafixed <- if (qseas > 0)
-                  rep(NA, qseas) else numeric(0)
-            if (length(sfracfix) != 1)
-                sfracfix <- NA else sfracfix <- sfracfix
-            if (slmodel == "n")
-                sfracfix <- numeric(0)
-            sfixx <- c(sarfixed, smafixed)
+          sarfixed <- fixed$seasonal$phi
+          smafixed <- fixed$seasonal$theta
+          sfracfix <- fixed$seasonal$frac
+          if (length(sarfixed) != pseas) {
+            warnstring <- paste0(warnstring, "\n seasonal phi is ", sarfixed,
+                                 " but pseas = ", pseas, " unfixing s_phi")
+            sarfixed <- if (pseas > 0)
+              rep(NA, pseas) else numeric(0)
+
+          }
+          else if(pseas>0 && length(sarfixed)==pseas&&any(!is.na(sarfixed))) {
+            if(sum(is.na(sarfixed))==0) {
+              if(!InvertibleQ(sarfixed)) {
+                stop("seasonal phi parameters fixed at nonstationary parameters")
+              }
+            }
+          }
+
+          if (length(smafixed) != qseas) {
+            warnstring <- paste0(warnstring, "\n seasonal theta is ", smafixed,
+                                 " but qseas = ", qseas, " unfixing s_theta")
+            smafixed <- if (qseas > 0)
+              rep(NA, qseas) else numeric(0)
+
+          }
+          else if(qseas>0 && length(smafixed)==qseas&&any(!is.na(smafixed))) {
+            if(sum(is.na(smafixed))==0) {
+              if(!InvertibleQ(smafixed)) {
+                stop("seasonal theta parameters fixed at noninvertible parameters")
+              }
+            }
+          }
+
+          if (!is.null(sfracfix) && length(sfracfix) != 1 && !is.na(sfracfix)) {
+            warnstring <- paste0(warnstring, "\n seasonal fractional parameter is",
+                                 "\n fixed greater than length 1, resetting seasonal",
+                                 "\n fractional prameter ")
+            if(slmodel=="n") {
+              warnstring("\n slmodel == 'n' and seasonal fractional parameter fixed",
+                        "\n resetting")
+              sfracfix <- numeric(0)
+            }
+            else sfracfix <- NA
+          }
+          if(slmodel!="n"&&(!is.null(sfracfix)&&!is.na(sfracfix))) {
+            fix_stop <- F
+            if(slmodel=="d") {
+              if(!InvertibleD(sfracfix)) fix_stop <- T
+            }
+            else if(slmodel=="g") {
+              if(!InvertibleH(sfracfix)) fix_stop <- T
+            }
+            else {
+              if(!InvertibleAlpha(sfracfix)) fix_stop <- T
+            }
+            if(fix_stop) {
+              stop("seasonal fractional parameter fixed at nonstationary/noninvertible value")
+            }
+          }
+          sfixx <- c(sarfixed, smafixed)
         } else {
             sfixx <- NULL
             sfracfix <- NULL
@@ -553,13 +647,13 @@
             numtries <- numtries/(numeach[1]^(sum(!is.na(arfixed))))
         if (q > 0 && any(!is.na(mafixed)))
             numtries <- numtries/(numeach[1]^(sum(!is.na(mafixed))))
-        if (lmodel != "n" && !is.na(fracfix))
+        if (lmodel != "n" && (is.null(fracfix)||!is.na(fracfix)))
             numtries <- numtries/numeach[2]
         if (pseas > 0 && any(!is.na(sarfixed)))
             numtries <- numtries/(snumeach[1]^(sum(!is.na(sarfixed))))
         if (qseas > 0 && any(!is.na(smafixed)))
             numtries <- numtries/(snumeach[1]^(sum(!is.na(smafixed))))
-        if (slmodel != "n" && !is.na(sfracfix))
+        if (slmodel != "n" && (is.null(sfracfix)||!is.na(sfracfix)))
             numtries <- numtries/snumeach[2]
     }
 
