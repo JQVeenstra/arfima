@@ -1,4 +1,4 @@
-Package: arfima
+Package: arfima 
 Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
 Version: 1.6-5
 Date: 2017-08-24
