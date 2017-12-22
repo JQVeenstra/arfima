@@ -407,6 +407,7 @@ summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...
     tseflag <- TRUE
     for (i in 1:m) {
         ses <- sqrt(diag(vcovs[[i]]$observed))
+        ses[ans$indfixx] <- NA
         if ((!is.logical(dmean)) || (!dmean))
             ses <- c(ses, NA)
         if (!vcovs$warnH && !vcovs$warnX)
@@ -848,7 +849,15 @@ vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = m
     warnH <- warnX <- FALSE
     if (type %in% c("b", "o")) {
         for (i in 1:m) {
-            ret[[i]]$observed <- solve(-ans$modes[[i]]$hess)
+            temp <- solve(-ans$modes[[i]]$hess)
+            if(all(!ans$indfixx)) {
+              ret[[i]]$observed <- temp
+            }
+            else {
+              num <- length(ans$indfixx)
+              ret[[i]]$observed <- matrix(0, nrow = num, ncol = num)
+              ret[[i]]$observed[!ans$indfixx, !ans$indfixx] <- temp
+            }
 
             if (cor) {
                 temp <- ret[[i]]$observed
@@ -860,6 +869,7 @@ vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = m
                   }
                 }
                 ret[[i]]$observed <- temp
+                ret[[i]]$observed[ans$indfixx, ans$indfixx] <- 0
             }
             ret[[i]]$observed <- signif(ret[[i]]$observed, digits = digits)
             rownames(ret[[i]]$observed) <- colnames(ret[[i]]$observed) <- nm

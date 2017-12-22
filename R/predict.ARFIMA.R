@@ -127,10 +127,10 @@ predict.arfima <- function(
         stop("predict only takes static regression parameters, not full transfer functions/dynamic regressions")
     if (!is.null(object$r) && any(object$r > 1))
         stop("predict only takes static regression parameters, not full transfer functions/dynamic regressions")
-    myNROW <- function(x) if (is.null(x))
+    myNROW <- function(x) if (is.null(x)&&is.null(nrow(x)))
         0 else nrow(x)
 
-    myNCOL <- function(x) if (is.null(x))
+    myNCOL <- function(x) if (is.null(x)&&is.null(nrow(x)))
         0 else ncol(x)
 
 
@@ -236,7 +236,7 @@ predict.arfima <- function(
           znew$Forecast <- integ(z = znew$Forecast, zinit = zinit, dint = dint, dseas = dseas,
                                  period = period)
           znew$Forecast <- znew$Forecast[-c(1:icap)]
-          if(nrxreg) {
+          if (nrxreg>0) {
             lastpoint <- rep(tail(object$z, 1), length(znew$Forecast))
             znew$Forecast <- znew$Forecast+lastpoint
           }

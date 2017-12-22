@@ -797,7 +797,8 @@
                     qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = TRUE, getHess = getHess,
                     numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
                     call = match.call(), flag0 = flag0, numeach = numeach, strReg = F,
-                    regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg)
+                    regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg,
+                    fixx = fixx, indfixx = indfixx)
         # ans <- list(z = z, differencing = differencing, dint = dint, dseas = dseas, period = period,
         #     modes = allpars, dmean = dmean, itmean = itmean, p = p, q = q, pseas = pseas,
         #     qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = TRUE, getHess = getHess,
@@ -1225,7 +1226,8 @@
             qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = weeded, getHess = getHess,
             numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
             call = match.call(), flag0 = flag0, numeach = numeach, strReg = straightRegress,
-            regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg)
+            regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg,
+            fixx = fixx, indfixx = indfixx)
     }
 
     class(ans) <- "arfima"
@@ -1470,7 +1472,7 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
         numcut = numcut, index = index, weeded = TRUE, n = ans$n, xreg = ans$xreg, r = ans$r,
         s = ans$s, b = ans$b, call = ans$call, flag0 = ans$flag0, numeach = ans$numeach,
         strReg = ans$strReg, namexreg = ans$namexreg, regOnly = ans$regOnly, intindex = ans$intindex,
-        intname = ans$intname)
+        intname = ans$intname, fixx = ans$fixx, indfixx = ans$indfixx)
     class(ans1) <- "arfima"
     ans1
 
