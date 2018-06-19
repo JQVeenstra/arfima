@@ -401,7 +401,7 @@ summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...
         corrs <- vcovs else corrs <- NULL
     logl <- logLik(ans)
     aics <- AIC(logl)
-    bics <- AIC(logl, k = length(object$z))
+    bics <- AIC(logl, k=log(length(object$z)))
     ans1 <- list()
     sigmas <- rep(0, m)
     tseflag <- TRUE
