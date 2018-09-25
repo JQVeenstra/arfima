@@ -68,6 +68,9 @@ beginning of the series (i.e. dint + period * seasonal dint = the length of
 zinit) to obtain a series of length n.  The stationary series is generated
 by calculating the theoretical autovariance function and using it, along
 with the innovations to generate a series as in McLeod et. al. (2007).
+
+\emph{Note:} if you would like to fit a function from a fitted arfima model,
+the shortcut \code{arfima(n, fit)} can be used.
 }
 \examples{
 
