@@ -713,10 +713,10 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 
         if (tpacf)
             coeff <- c(phip, thetap, phiseasp, thetaseasp, dfrac, H, alpha, dfs, Hs, alphas,
-                       muHat, omega, delta)
+                       omega, delta, muHat)
         else
             coeff <- c(phi, theta, phiseas, thetaseas, dfrac, H, alpha, dfs, Hs, alphas,
-                       muHat, omega, delta)
+                       omega, delta, muHat)
 
         coeffs <- rbind(coeffs, coeff)
     }
