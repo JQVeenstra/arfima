@@ -4,11 +4,12 @@
 \alias{arfima.sim}
 \title{Simulate an ARFIMA time series.}
 \usage{
-arfima.sim(n, model = list(phi = numeric(0), theta = numeric(0), dint = 0,
-  dfrac = numeric(0), H = numeric(0), alpha = numeric(0), seasonal = list(phi =
-  numeric(0), theta = numeric(0), dint = 0, period = numeric(0), dfrac =
-  numeric(0), H = numeric(0), alpha = numeric(0))), useC = 3, sigma2 = 1,
-  rand.gen = rnorm, muHat = 0, zinit = NULL, innov = NULL, ...)
+arfima.sim(n, model = list(phi = numeric(0), theta = numeric(0), dint =
+  0, dfrac = numeric(0), H = numeric(0), alpha = numeric(0), seasonal =
+  list(phi = numeric(0), theta = numeric(0), dint = 0, period = numeric(0),
+  dfrac = numeric(0), H = numeric(0), alpha = numeric(0))), useC = 3,
+  sigma2 = 1, rand.gen = rnorm, muHat = 0, zinit = NULL,
+  innov = NULL, ...)
 }
 \arguments{
 \item{n}{The number of points to be generated.}
@@ -68,9 +69,8 @@ beginning of the series (i.e. dint + period * seasonal dint = the length of
 zinit) to obtain a series of length n.  The stationary series is generated
 by calculating the theoretical autovariance function and using it, along
 with the innovations to generate a series as in McLeod et. al. (2007).
-
 \emph{Note:} if you would like to fit a function from a fitted arfima model,
-the shortcut \code{arfima(n, fit)} can be used.
+the function \code{sim_from_fitted} can be used.
 }
 \examples{
 
@@ -93,7 +93,7 @@ P. Borwein (1995) An efficient algorithm for Riemann Zeta function Canadian
 Math. Soc. Conf. Proc., 27, pp. 29-34.
 }
 \seealso{
-\code{\link{arfima}}
+\code{\link{arfima}}, \code{\link{sim_from_fitted}}
 }
 \author{
 JQ (Justin) Veenstra

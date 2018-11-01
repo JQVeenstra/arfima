@@ -5,15 +5,15 @@
 \title{Fit ARFIMA, ARIMA-FGN, and ARIMA-PLA (multi-start) models}
 \usage{
 arfima(z, order = c(0, 0, 0), numeach = c(1, 1), dmean = TRUE,
-  whichopt = 0, itmean = FALSE, fixed = list(phi = NA, theta = NA, frac =
-  NA, seasonal = list(phi = NA, theta = NA, frac = NA), reg = NA),
-  lmodel = c("d", "g", "h", "n"), seasonal = list(order = c(0, 0, 0), period
-  = NA, lmodel = c("d", "g", "h", "n"), numeach = c(1, 1)), useC = 3,
-  cpus = 1, rand = FALSE, numrand = NULL, seed = NA, eps3 = 0.01,
-  xreg = NULL, reglist = list(regpar = NA, minn = -10, maxx = 10, numeach =
-  1), check = F, autoweed = TRUE, weedeps = 0.01, adapt = TRUE,
-  weedtype = c("A", "P", "B"), weedp = 2, quiet = FALSE,
-  startfit = NULL, back = FALSE)
+  whichopt = 0, itmean = FALSE, fixed = list(phi = NA, theta = NA,
+  frac = NA, seasonal = list(phi = NA, theta = NA, frac = NA), reg = NA),
+  lmodel = c("d", "g", "h", "n"), seasonal = list(order = c(0, 0, 0),
+  period = NA, lmodel = c("d", "g", "h", "n"), numeach = c(1, 1)),
+  useC = 3, cpus = 1, rand = FALSE, numrand = NULL, seed = NA,
+  eps3 = 0.01, xreg = NULL, reglist = list(regpar = NA, minn = -10,
+  maxx = 10, numeach = 1), check = F, autoweed = TRUE,
+  weedeps = 0.01, adapt = TRUE, weedtype = c("A", "P", "B"),
+  weedp = 2, quiet = FALSE, startfit = NULL, back = FALSE)
 }
 \arguments{
 \item{z}{The data set (time series)}
@@ -182,7 +182,7 @@ the log-likelihood; and a "3" means C is used to compute everything.
 set.seed(8564)
 sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 dfrac = 0.4, theta = 0.9))
-fit <- arfima(sim, order = c(2, 0, 1), back=T)
+fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 
 fit
 

@@ -5,11 +5,11 @@
 \title{Checks invertibility, stationarity, and identifiability of a given set of
 parameters}
 \usage{
-IdentInvertQ(phi = numeric(0), theta = numeric(0), phiseas = numeric(0),
-  thetaseas = numeric(0), dfrac = numeric(0), dfs = numeric(0),
-  H = numeric(0), Hs = numeric(0), alpha = numeric(0),
-  alphas = numeric(0), delta = numeric(0), period = 0, debug = FALSE,
-  ident = TRUE)
+IdentInvertQ(phi = numeric(0), theta = numeric(0),
+  phiseas = numeric(0), thetaseas = numeric(0), dfrac = numeric(0),
+  dfs = numeric(0), H = numeric(0), Hs = numeric(0),
+  alpha = numeric(0), alphas = numeric(0), delta = numeric(0),
+  period = 0, debug = FALSE, ident = TRUE)
 }
 \arguments{
 \item{phi}{The autoregressive parameters in vector form.}

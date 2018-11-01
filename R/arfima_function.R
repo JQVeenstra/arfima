@@ -150,7 +150,7 @@
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 #' dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #'
@@ -1277,7 +1277,7 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' \donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(theta = 0.9, dfrac = 0.4))
-#' fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE, back=T)
+#' fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE, back=TRUE)
 #' fit
 #' distance(fit)
 #' fit1 <- weed(fit)
@@ -1501,7 +1501,7 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
 #' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #'
@@ -1560,7 +1560,7 @@ distance <- function(ans, p = 2, digits = 4) {
 #' \donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
-#' fit <- arfima(sim, order = c(1, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(1, 0, 1), back=TRUE)
 #' fit
 #' fit <- bestModes(fit, 2)
 #' fit

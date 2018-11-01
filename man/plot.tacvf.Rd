@@ -4,9 +4,9 @@
 \alias{plot.tacvf}
 \title{Plots the output from a call to \code{tacvf}}
 \usage{
-\method{plot}{tacvf}(x, type = "o", pch = 20, xlab = NULL, ylab = NULL,
-  main = NULL, xlim = NULL, ylim = NULL, tacf = FALSE, maxlag = NULL,
-  lag0 = !tacf, ...)
+\method{plot}{tacvf}(x, type = "o", pch = 20, xlab = NULL,
+  ylab = NULL, main = NULL, xlim = NULL, ylim = NULL,
+  tacf = FALSE, maxlag = NULL, lag0 = !tacf, ...)
 }
 \arguments{
 \item{x}{A \code{tacvf} object from a call to said function}

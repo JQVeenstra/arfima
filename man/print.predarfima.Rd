@@ -4,7 +4,8 @@
 \alias{print.predarfima}
 \title{Prints predictions and prediction intervals}
 \usage{
-\method{print}{predarfima}(x, digits = max(6, getOption("digits") - 3), ...)
+\method{print}{predarfima}(x, digits = max(6, getOption("digits") - 3),
+  ...)
 }
 \arguments{
 \item{x}{An object of class "predarfima"}
@@ -28,7 +29,7 @@ Prints all the relavent output of the prediction function of the
 \donttest{
 set.seed(82365)
 sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
-fit <- arfima(sim, order = c(0, 1, 1), back=T)
+fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
 fit
 pred <- predict(fit, n.ahead = 5)
 pred

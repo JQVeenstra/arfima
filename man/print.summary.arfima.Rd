@@ -4,8 +4,8 @@
 \alias{print.summary.arfima}
 \title{Prints the output of a call to \code{summary} on an \code{arfima} object}
 \usage{
-\method{print}{summary.arfima}(x, digits = max(6, getOption("digits") - 3),
-  signif.stars = getOption("show.signif.stars"), ...)
+\method{print}{summary.arfima}(x, digits = max(6, getOption("digits") -
+  3), signif.stars = getOption("show.signif.stars"), ...)
 }
 \arguments{
 \item{x}{A \code{summary.arfima} object}
@@ -27,7 +27,7 @@ Prints the output of a call to \code{summary} on an \code{arfima} object
 \donttest{
 set.seed(54678)
 sim <- arfima.sim(1000, model = list(phi = 0.9, H = 0.3))
-fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=T)
+fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=TRUE)
 summary(fit)
 }
 

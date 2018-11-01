@@ -1,7 +1,7 @@
 Package: arfima
 Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
-Version: 1.6-8
-Date: 2018-09-25
+Version: 1.7-0
+Date: 2018-11-01
 Author: JQ (Justin) Veenstra [aut, cre], A.I. McLeod [aut]
 Maintainer: JQ Veenstra <jqveenstra@gmail.com>
 Depends: 
@@ -16,4 +16,4 @@ Description: Simulates, fits, and predicts long-memory and anti-persistent
 	<https://github.com/JQVeenstra/arfima>), where the development version
 	of this package lives; it can be installed using devtools.
 License: MIT + file LICENSE
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

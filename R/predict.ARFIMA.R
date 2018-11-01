@@ -44,7 +44,7 @@
 #' \donttest{
 #' set.seed(82365)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
-#' fit <- arfima(sim, order = c(0, 1, 1), back=T)
+#' fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
 #' fit
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
@@ -63,7 +63,7 @@
 #' X <- X[1:1000,]
 #' beta <- matrix(c(2, -.4, 6), ncol = 1)
 #' simX <- sim + as.vector(X%*%beta)
-#' fitX <- arfima(simX, order = c(0, 1, 1), xreg = X, back=T)
+#' fitX <- arfima(simX, order = c(0, 1, 1), xreg = X, back=TRUE)
 #' fitX
 #' #Let's compare predictions.
 #' predX <- predict(fitX, n.ahead = n.fore, xreg = Xnew)

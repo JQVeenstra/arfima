@@ -15,7 +15,7 @@
 #' \donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
-#' fit <- arfima(sim, order = c(1, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(1, 0, 1), back=TRUE)
 #' fit
 #' fit <- removeMode(fit, 3)
 #' fit
@@ -61,7 +61,7 @@ BIC <- function(object, ...) {
 #' \donttest{
 #' set.seed(82365)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
-#' fit <- arfima(sim, order = c(0, 1, 1), back=T)
+#' fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
 #' fit
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
@@ -250,7 +250,7 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 #' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #'
@@ -305,7 +305,7 @@ fitted.arfima <- function(object, ...) {
 #' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #'
@@ -375,7 +375,7 @@ residuals.arfima <- resid.arfima <- function(object, reg = FALSE, ...) {
 #' \donttest{
 #' data(tmpyr)
 #'
-#' fit <- arfima(tmpyr, order = c(1, 0, 1), back=T)
+#' fit <- arfima(tmpyr, order = c(1, 0, 1), back=TRUE)
 #' fit
 #'
 #' summary(fit)
@@ -461,7 +461,7 @@ summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...
 #' \donttest{
 #' set.seed(54678)
 #' sim <- arfima.sim(1000, model = list(phi = 0.9, H = 0.3))
-#' fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=T)
+#' fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=TRUE)
 #' summary(fit)
 #' }
 #'
@@ -594,7 +594,7 @@ logLik.arfima <- function(object, ...) {
 #' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
-#' fit <- arfima(sim, order = c(2, 0, 1), back=T)
+#' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #' coef(fit)
@@ -748,9 +748,9 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 #' \donttest{
 #' set.seed(34577)
 #' sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
-#' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=T)
-#' fit2 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "g", back=T)
-#' fit3 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "h", back=T)
+#' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=TRUE)
+#' fit2 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "g", back=TRUE)
+#' fit3 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "h", back=TRUE)
 #'
 #' AIC(fit1)
 #' AIC(fit2)
@@ -810,9 +810,9 @@ BIC.arfima <- function(object, ...) {
 #' \donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, phi = .8, theta = -0.5))
-#' fit1 <- arfima(sim, order = c(1, 0, 1), back=T)
-#' fit2 <- arfima(sim, order = c(1, 0, 1), lmodel = "g", back=T)
-#' fit3 <- arfima(sim, order = c(1, 0, 1), lmodel = "h", back=T)
+#' fit1 <- arfima(sim, order = c(1, 0, 1), back=TRUE)
+#' fit2 <- arfima(sim, order = c(1, 0, 1), lmodel = "g", back=TRUE)
+#' fit3 <- arfima(sim, order = c(1, 0, 1), lmodel = "h", back=TRUE)
 #' fit1
 #' fit2
 #' fit3
