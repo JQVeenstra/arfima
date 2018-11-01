@@ -59,6 +59,7 @@ sim2 <- sim_from_fitted(100, fit)
 
 fit2 <- arfima(sim2, order = c(1, 2, 0))
 fit2
+
 \donttest{
 set.seed(2266)
 #Fairly pathological series to fit for this package
@@ -72,7 +73,7 @@ fit <- arfima(series, order = c(1, 0, 0), numeach = c(2, 2))
 fit_X <- arfima(series_added, order=c(1, 0, 0), xreg=X, numeach = c(2, 2))
 
 from_series <- sim_from_fitted(1000, fit)
-
+ 
 fit1a <- arfima(from_series[[1]], order = c(1, 0, 0), numeach = c(2, 2))
 fit1a
 fit1 <- arfima(from_series[[1]], order = c(1, 0, 0))

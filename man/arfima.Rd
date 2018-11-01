@@ -2,7 +2,15 @@
 % Please edit documentation in R/arfima_function.R
 \name{arfima}
 \alias{arfima}
-\title{Fit ARFIMA, ARIMA-FGN, and ARIMA-PLA (multi-start) models}
+\title{Fit ARFIMA, ARIMA-FGN, and ARIMA-PLA (multi-start) models
+ 
+Fits ARFIMA/ARIMA-FGN/ARIMA-PLA multi-start models to times series data.
+Options include fixing parameters, whether or not to fit fractional noise,
+what type of fractional noise (fractional Gaussian noise (FGN), fractionally
+differenced white noise (FDWN), or the newly introduced power-law
+autocovariance noise (PLA)), etc.  This function can fit regressions with
+ARFIMA/ARIMA-FGN/ARIMA-PLA errors via the xreg argument, including dynamic
+regression (transfer functions).}
 \usage{
 arfima(z, order = c(0, 0, 0), numeach = c(1, 1), dmean = TRUE,
   whichopt = 0, itmean = FALSE, fixed = list(phi = NA, theta = NA,
@@ -144,18 +152,10 @@ Note that if multiple modes are found, they are listed in order of
 log-likelihood value.
 }
 \description{
-Fits ARFIMA/ARIMA-FGN/ARIMA-PLA multi-start models to times series data.
-Options include fixing parameters, whether or not to fit fractional noise,
-what type of fractional noise (fractional Gaussian noise (FGN), fractionally
-differenced white noise (FDWN), or the newly introduced power-law
-autocovariance noise (PLA)), etc.  This function can fit regressions with
-ARFIMA/ARIMA-FGN/ARIMA-PLA errors via the xreg argument, including dynamic
-regression (transfer functions).
-}
-\details{
 Fits by direct optimization using optim.  The optimizer choices are: 0 -
 BFGS; 1 - Nealder-Mead; 2 - SANN; otherwise CG.
-
+}
+\details{
 A word of warning: it is generally better to use the default, and only use
 Nelder-Mead to check for spurious modes.  SANN takes a long time (and may
 only find one mode), and CG may not be stable.
