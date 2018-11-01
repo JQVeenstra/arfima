@@ -3,7 +3,11 @@
 \name{lARFIMAwTF}
 \alias{lARFIMAwTF}
 \title{Exact log-likelihood of a long memory model with a transfer function model
-and series included}
+and series included
+ 
+Computes the exact log-likelihood of a long memory model with respect to a
+given time series as well as a transfer fucntion model and series. This
+function is not meant to be used directly.}
 \usage{
 lARFIMAwTF(z, phi = numeric(0), theta = numeric(0),
   dfrac = numeric(0), phiseas = numeric(0), thetaseas = numeric(0),
@@ -70,11 +74,6 @@ The value 3 is strongly recommended. See "Details".}
 A log-likelihood value
 }
 \description{
-Computes the exact log-likelihood of a long memory model with respect to a
-given time series as well as a transfer fucntion model and series. This
-function is not meant to be used directly.
-}
-\details{
 Once again, this function should not be used externally.
 }
 \references{

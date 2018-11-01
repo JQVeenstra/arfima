@@ -2,7 +2,11 @@
 % Please edit documentation in R/arfima0.R
 \name{arfima0}
 \alias{arfima0}
-\title{Exact MLE for ARFIMA}
+\title{Exact MLE for ARFIMA
+ 
+The time series is corrected for the sample mean and then exact MLE is used
+for the other parameters. This is a simplified version of the arfima()
+function that may be useful in simulations and bootstrapping.}
 \usage{
 arfima0(z, order = c(0, 0, 0), lmodel = c("FD", "FGN", "PLA", "NONE"))
 }
@@ -22,11 +26,6 @@ approximate log-likelihood} \item{LL}{corresponding exact log-likelihood}
 \item{convergence}{convergence indicator}
 }
 \description{
-The time series is corrected for the sample mean and then exact MLE is used
-for the other parameters. This is a simplified version of the arfima()
-function that may be useful in simulations and bootstrapping.
-}
-\details{
 The sample mean is asymptotically efficient.
 }
 \examples{
