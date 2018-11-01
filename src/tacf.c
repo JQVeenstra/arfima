@@ -11,7 +11,7 @@
 #include <R_ext/Lapack.h>
 #include <R_ext/BLAS.h>
 #include <R_ext/RS.h>
-
+ 
 #ifndef max
 #define max(a,b) ((a < b)?(b):(a))
 #endif

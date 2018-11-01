@@ -9,7 +9,7 @@ C
 C**********************************************************************
       SUBROUTINE INTEGD(Z, NCAP, N, ID, IDS, ISEA, ZINIT, IDCAP)
 C**********************************************************************
-C
+C 
 C INPUT PARAMETERS:
 C   Z - VECTOR OF DIMENSION NCAP. Z(1),...,Z(N) CONTAINS THE TIME
 C       SERIES TO BE INTEGRATED.

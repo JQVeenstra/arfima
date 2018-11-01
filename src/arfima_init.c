@@ -5,7 +5,7 @@
 /* FIXME:
    Check these declarations against the C/Fortran source code.
 */
-
+ 
 /* .C calls */
 extern void durlevsim(void *, void *, void *, void *, void *, void *);
 extern void shift_C(void *, void *, void *, void *);

@@ -10,7 +10,7 @@ input parameters:
 	z - vector of length n, simulated time series
 	ifault -  0, OK ;  1, c is not p.d.    
 ***************************************************************************************/
-
+ 
 #include <math.h>
 
 void durlevsim(double *z, double *error, int *nR, double *c, double *EPSL, int *fault)  

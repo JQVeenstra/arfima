@@ -4,7 +4,7 @@
 #define min(a,b) a > b ? b : a
 
 
-
+ 
 void tfcalc(double *y, int *n, double *x, double *delta, int *r, double *omega, int *s, int *b, int *num, double *meanval) 
 {
 
