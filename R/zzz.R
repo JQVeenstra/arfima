@@ -54,7 +54,7 @@ Changes in arfima starting in 1.6-2:
     created by the previous fix in 1.6-0 and 1.6-1.
 
 Changes in arfima starting in 1.7-0:
-  1.  Added the sim_from_fixed function
+  1.  Added the sim_from_fixed function 
 
 Note: on prediction intervals with xreg, the intervals are only with respect to
 the time series itself.  I will update to include standard errors on beta

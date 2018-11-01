@@ -1,6 +1,6 @@
 
 #' Fit ARFIMA, ARIMA-FGN, and ARIMA-PLA (multi-start) models
-#'
+#'  
 #' Fits ARFIMA/ARIMA-FGN/ARIMA-PLA multi-start models to times series data.
 #' Options include fixing parameters, whether or not to fit fractional noise,
 #' what type of fractional noise (fractional Gaussian noise (FGN), fractionally

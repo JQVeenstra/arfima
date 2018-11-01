@@ -1,6 +1,6 @@
 #' Exact log-likelihood of a long memory model with a transfer function model
 #' and series included
-#' 
+#'  
 #' Computes the exact log-likelihood of a long memory model with respect to a
 #' given time series as well as a transfer fucntion model and series. This
 #' function is not meant to be used directly.

@@ -1,5 +1,5 @@
 #' Predicts from a fitted object.
-#'
+#' 
 #' Performs prediction of a fitted \code{arfima} object. Includes prediction
 #' for each mode and exact and limiting prediction error standard deviations.
 #' \strong{NOTE:  the standard errors in beta are currently not taken into

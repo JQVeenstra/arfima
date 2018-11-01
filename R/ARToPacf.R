@@ -1,5 +1,5 @@
 #' Converts AR/MA coefficients from operator space to the PACF space
-#'
+#' 
 #' Converts AR/MA coefficients from operator space to the PACF box-space;
 #' usually for internal use
 #'

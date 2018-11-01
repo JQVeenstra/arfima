@@ -8,7 +8,7 @@ mix <- function(x, y) {
 
 
 #' Extracts the tacvfs of a fitted object
-#'
+#' 
 #' Extracts the theoretical autocovariance functions (tacvfs) from a fitted
 #' \code{arfima} or one of its modes (an \code{ARFIMA}) object.
 #'
