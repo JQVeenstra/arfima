@@ -4,7 +4,9 @@
 \name{SeriesJ}
 \alias{SeriesJ}
 \title{Series J, Gas Furnace Data}
-\format{List with ts objects XJ and YJ.}
+\format{
+List with ts objects XJ and YJ.
+}
 \source{
 Box, Jenkins and Reinsel(2008).  Time Series Analysis: Forecasting
 and Control.

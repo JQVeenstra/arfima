@@ -287,7 +287,6 @@ arfima.sim <- function(n, model = list(phi = numeric(0), theta = numeric(0), din
 #' fit2 <- arfima(sim2, order = c(1, 2, 0))
 #' fit2
 #' 
-#' \donttest{
 #' set.seed(2266)
 #' #Fairly pathological series to fit for this package
 #' series = arfima.sim(500, model=list(phi = 0.98, dfrac = 0.46))
@@ -325,7 +324,7 @@ arfima.sim <- function(n, model = list(phi = numeric(0), theta = numeric(0), din
 #' fit_X3
 #' fit_X4 <- arfima(from_series_X[[4]], order=c(1, 0, 0), xreg=Xnew)
 #' fit_X4
-#' }
+#' 
 #' @export sim_from_fitted
 sim_from_fitted <- function(n, model, X = NULL, seed = NULL) {
   

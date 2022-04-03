@@ -4,8 +4,7 @@
 \alias{summary.arfima}
 \title{Extensive Summary of an Object}
 \usage{
-\method{summary}{arfima}(object, digits = max(4, getOption("digits") -
-  3), ...)
+\method{summary}{arfima}(object, digits = max(4, getOption("digits") - 3), ...)
 }
 \arguments{
 \item{object}{A fitted \code{arfima} object}
@@ -26,14 +25,12 @@ more, for each mode.
 }
 \examples{
 
-\donttest{
 data(tmpyr)
 
 fit <- arfima(tmpyr, order = c(1, 0, 1), back=TRUE)
 fit
 
 summary(fit)
-}
 
 }
 \references{

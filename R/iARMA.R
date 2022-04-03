@@ -332,7 +332,6 @@
 #' @keywords ts
 #' @examples
 #' 
-#' \donttest{
 #' tick <- proc.time()
 #' exactI <- iARFIMA(phi = c(.4, -.2), theta = c(.7), phiseas = c(.8, -.4),
 #' 	d = TRUE, dfs = TRUE, period = 12)
@@ -343,7 +342,6 @@
 #' proc.time() - tick
 #' exactI
 #' max(abs(exactI - approxI))
-#' }
 #' 
 #' @export iARFIMA
 "iARFIMA" <- function(phi = numeric(0), theta = numeric(0), phiseas = numeric(0), thetaseas = numeric(0), 

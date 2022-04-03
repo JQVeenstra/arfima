@@ -4,9 +4,18 @@
 \alias{tacfplot}
 \title{Plots the theoretical autocorralation functions (tacfs) of one or more fits.}
 \usage{
-tacfplot(fits = list(), modes = "all", xlab = NULL, ylab = NULL,
-  main = NULL, xlim = NULL, ylim = NULL, maxlag = 20,
-  lag0 = FALSE, ...)
+tacfplot(
+  fits = list(),
+  modes = "all",
+  xlab = NULL,
+  ylab = NULL,
+  main = NULL,
+  xlim = NULL,
+  ylim = NULL,
+  maxlag = 20,
+  lag0 = FALSE,
+  ...
+)
 }
 \arguments{
 \item{fits}{A list of objects of class "arfima".}
@@ -41,7 +50,6 @@ Plots the theoretical autocorralation functions (tacfs) of one or more fits.
 }
 \examples{
 
-\donttest{
 set.seed(34577)
 sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
 fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=TRUE)
@@ -51,7 +59,6 @@ fit1
 fit2
 fit3
 tacfplot(fits = list(fit1, fit2, fit3), maxlag = 30)
-}
 
 }
 \references{

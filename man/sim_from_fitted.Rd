@@ -60,7 +60,6 @@ sim2 <- sim_from_fitted(100, fit)
 fit2 <- arfima(sim2, order = c(1, 2, 0))
 fit2
 
-\donttest{
 set.seed(2266)
 #Fairly pathological series to fit for this package
 series = arfima.sim(500, model=list(phi = 0.98, dfrac = 0.46))
@@ -98,7 +97,7 @@ fit_X3 <- arfima(from_series_X[[3]], order=c(1, 0, 0), xreg=Xnew)
 fit_X3
 fit_X4 <- arfima(from_series_X[[4]], order=c(1, 0, 0), xreg=Xnew)
 fit_X4
-}
+
 }
 \references{
 McLeod, A. I., Yu, H. and Krougly, Z. L. (2007) Algorithms for

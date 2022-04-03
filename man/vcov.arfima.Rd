@@ -4,9 +4,15 @@
 \alias{vcov.arfima}
 \title{Extracts the Variance-Covariance Matrix}
 \usage{
-\method{vcov}{arfima}(object, type = c("b", "o", "e"), cor = FALSE,
-  digits = max(4, getOption("digits") - 3), tapprox = FALSE,
-  summ = FALSE, ...)
+\method{vcov}{arfima}(
+  object,
+  type = c("b", "o", "e"),
+  cor = FALSE,
+  digits = max(4, getOption("digits") - 3),
+  tapprox = FALSE,
+  summ = FALSE,
+  ...
+)
 }
 \arguments{
 \item{object}{A fitted \code{arfima} object}
@@ -38,7 +44,6 @@ fitted \code{arfima} object.
 }
 \examples{
 
-\donttest{
 set.seed(1234)
 sim <- arfima.sim(1000, model = list(dfrac = 0.4, phi = .8, theta = -0.5))
 fit1 <- arfima(sim, order = c(1, 0, 1), back=TRUE)
@@ -50,7 +55,6 @@ fit3
 vcov(fit1)
 vcov(fit2)
 vcov(fit2)
-}
 
 }
 \references{

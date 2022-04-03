@@ -1,6 +1,6 @@
 getsigma2muhat <- function(z, phi = numeric(0), phiseas = numeric(0), theta = numeric(0), 
     thetaseas = numeric(0), H = numeric(0), period = 0, dfrac = numeric(0), alpha = numeric(0), 
-    dfs = numeric(0), Hs = numeric(0), alphas = numeric(0)) {
+    dfs = numeric(0), Hs = numeric(0), alphas = numeric(0), mean.dof = 0) {
     
     n <- length(z)
     r <- tacvfARFIMA(phi = phi, theta = theta, dfrac = dfrac, phiseas = phiseas, thetaseas = thetaseas, 
@@ -29,7 +29,8 @@ getsigma2muhat <- function(z, phi = numeric(0), phiseas = numeric(0), theta = nu
     S <- sum((error * error)/sigmasq)
     
     sigma2 <- S/(n - length(phi) - length(theta) - length(thetaseas) - length(phiseas) - 
-        length(H) - length(dfrac) - length(dfs) - length(alpha) - length(alphas))
+        length(H) - length(dfrac) - length(dfs) - length(alpha) - length(alphas) - 
+        mean.dof)
     
     sigma2
 } 

@@ -12,14 +12,12 @@
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
 #' fit <- arfima(sim, order = c(1, 0, 1), back=TRUE)
 #' fit
 #' fit <- removeMode(fit, 3)
 #' fit
-#' }
 #'
 #' @export removeMode
 removeMode <- function(object, num) {
@@ -58,7 +56,6 @@ BIC <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(82365)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
 #' fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
@@ -66,7 +63,6 @@ BIC <- function(object, ...) {
 #' pred <- predict(fit, n.ahead = 5)
 #' pred
 #' plot(pred)
-#' }
 #'
 print.predarfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 
@@ -247,7 +243,6 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -261,7 +256,6 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 #' plot(fitted[[2]], resid[[2]])
 #' plot(fitted[[3]], resid[[3]])
 #' par(mfrow = c(1, 1))
-#' }
 #'
 fitted.arfima <- function(object, ...) {
 
@@ -302,7 +296,6 @@ fitted.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -319,7 +312,6 @@ fitted.arfima <- function(object, ...) {
 #' plot(fitted[[2]], resid[[2]])
 #' plot(fitted[[3]], resid[[3]])
 #' par(mfrow = c(1, 1))
-#' }
 #'
 residuals.arfima <- resid.arfima <- function(object, reg = FALSE, ...) {
 
@@ -372,14 +364,12 @@ residuals.arfima <- resid.arfima <- function(object, reg = FALSE, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' data(tmpyr)
 #'
 #' fit <- arfima(tmpyr, order = c(1, 0, 1), back=TRUE)
 #' fit
 #'
 #' summary(fit)
-#' }
 #'
 summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...) {
     if (!object$weeded) {
@@ -458,12 +448,10 @@ summary.arfima <- function(object, digits = max(4, getOption("digits") - 3), ...
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(54678)
 #' sim <- arfima.sim(1000, model = list(phi = 0.9, H = 0.3))
 #' fit <- arfima(sim, order = c(1, 0, 0), lmodel = "g", back=TRUE)
 #' summary(fit)
-#' }
 #'
 print.summary.arfima <- function(x, digits = max(6, getOption("digits") - 3), signif.stars = getOption("show.signif.stars"),
     ...) {
@@ -571,10 +559,6 @@ logLik.arfima <- function(object, ...) {
     logl
 }
 
-# confint.arfima
-
-
-
 #' Extract Model Coefficients
 #'
 #' Extracts the coefficients from a \code{arfima} fit.
@@ -591,14 +575,12 @@ logLik.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #' coef(fit)
-#' }
 #'
 coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits") - 3),
     ...) {
@@ -725,9 +707,6 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
     coeffs
 }
 
-
-
-
 #' Information criteria for \code{arfima} objects
 #'
 #' Computes information criteria for \code{arfima} objects.  See
@@ -745,7 +724,6 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(34577)
 #' sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
 #' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=TRUE)
@@ -755,7 +733,6 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 #' AIC(fit1)
 #' AIC(fit2)
 #' AIC(fit3)
-#' }
 #'
 AIC.arfima <- function(object, ..., k = 2) {
     if (!object$weeded) {
@@ -807,7 +784,6 @@ BIC.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, phi = .8, theta = -0.5))
 #' fit1 <- arfima(sim, order = c(1, 0, 1), back=TRUE)
@@ -819,7 +795,6 @@ BIC.arfima <- function(object, ...) {
 #' vcov(fit1)
 #' vcov(fit2)
 #' vcov(fit2)
-#' }
 #'
 vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = max(4, getOption("digits") -
     3), tapprox = FALSE, summ = FALSE, ...) {
@@ -827,11 +802,12 @@ vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = m
         warning("The object has not been weeded:  there may be duplicate modes, as well as excessive output. \n For more sensible output, please call weed() on the object")
     }
     ans <- object
-
-    if (type == c("b", "o", "e") && !summ)
+    
+    if (is.vector(type))
+      type <- type[1]
+    
+    if (type %in% c("b", "o", "e") && !summ)
         cat("Returning both observed and theoretical covariance matrices: use type = \"o\" for just\n\t observed and \"e\" for just expected (from the expected Fisher information)\n")
-
-    type <- type[1]
 
     xreg <- ans$xreg
     dmean <- ans$dmean
@@ -887,8 +863,8 @@ vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = m
                 warning("The expected Fisher Information matrix does not include regression parameters.\n\n\t\t\t\tReporting this matrix for the ARFIMA processes: however, results may be skewed")
             warnX <- TRUE
         }
-        ifdf <- length(ans$modes[[1]]$dfrac) > 0
-        ifdfs <- length(ans$modes[[1]]$dfs) > 0
+        ifdf <- (length(ans$modes[[1]]$dfrac) > 0)
+        ifdfs <- (length(ans$modes[[1]]$dfs) > 0)
         for (i in 1:m) {
             cmode <- ans$modes[[i]]
 

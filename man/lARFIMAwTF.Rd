@@ -9,13 +9,28 @@ Computes the exact log-likelihood of a long memory model with respect to a
 given time series as well as a transfer fucntion model and series. This
 function is not meant to be used directly.}
 \usage{
-lARFIMAwTF(z, phi = numeric(0), theta = numeric(0),
-  dfrac = numeric(0), phiseas = numeric(0), thetaseas = numeric(0),
-  dfs = numeric(0), H = numeric(0), Hs = numeric(0),
-  alpha = numeric(0), alphas = numeric(0), xr = numeric(0),
-  r = numeric(0), s = numeric(0), b = numeric(0),
-  delta = numeric(0), omega = numeric(0), period = 0, useC = 3,
-  meanval = 0)
+lARFIMAwTF(
+  z,
+  phi = numeric(0),
+  theta = numeric(0),
+  dfrac = numeric(0),
+  phiseas = numeric(0),
+  thetaseas = numeric(0),
+  dfs = numeric(0),
+  H = numeric(0),
+  Hs = numeric(0),
+  alpha = numeric(0),
+  alphas = numeric(0),
+  xr = numeric(0),
+  r = numeric(0),
+  s = numeric(0),
+  b = numeric(0),
+  delta = numeric(0),
+  omega = numeric(0),
+  period = 0,
+  useC = 3,
+  meanval = 0
+)
 }
 \arguments{
 \item{z}{A vector or (univariate) time series object, assumed to be (weakly)

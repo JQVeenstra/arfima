@@ -4,10 +4,21 @@
 \alias{lARFIMA}
 \title{Exact log-likelihood of a long memory model}
 \usage{
-lARFIMA(z, phi = numeric(0), theta = numeric(0), dfrac = numeric(0),
-  phiseas = numeric(0), thetaseas = numeric(0), dfs = numeric(0),
-  H = numeric(0), Hs = numeric(0), alpha = numeric(0),
-  alphas = numeric(0), period = 0, useC = 3)
+lARFIMA(
+  z,
+  phi = numeric(0),
+  theta = numeric(0),
+  dfrac = numeric(0),
+  phiseas = numeric(0),
+  thetaseas = numeric(0),
+  dfs = numeric(0),
+  H = numeric(0),
+  Hs = numeric(0),
+  alpha = numeric(0),
+  alphas = numeric(0),
+  period = 0,
+  useC = 3
+)
 }
 \arguments{
 \item{z}{A vector or (univariate) time series object, assumed to be (weakly)

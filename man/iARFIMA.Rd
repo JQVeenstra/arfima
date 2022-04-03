@@ -4,9 +4,16 @@
 \alias{iARFIMA}
 \title{The Fisher information matrix of an ARFIMA process}
 \usage{
-iARFIMA(phi = numeric(0), theta = numeric(0), phiseas = numeric(0),
-  thetaseas = numeric(0), period = 0, dfrac = TRUE, dfs = FALSE,
-  exact = TRUE)
+iARFIMA(
+  phi = numeric(0),
+  theta = numeric(0),
+  phiseas = numeric(0),
+  thetaseas = numeric(0),
+  period = 0,
+  dfrac = TRUE,
+  dfs = FALSE,
+  exact = TRUE
+)
 }
 \arguments{
 \item{phi}{The autoregressive parameters in vector form.}
@@ -50,7 +57,6 @@ the negative of the parameters given by \code{\link{arima}}.
 }
 \examples{
 
-\donttest{
 tick <- proc.time()
 exactI <- iARFIMA(phi = c(.4, -.2), theta = c(.7), phiseas = c(.8, -.4),
 	d = TRUE, dfs = TRUE, period = 12)
@@ -61,7 +67,6 @@ approxI <- iARFIMA(phi = c(.4, -.2), theta = c(.7), phiseas = c(.8, -.4),
 proc.time() - tick
 exactI
 max(abs(exactI - approxI))
-}
 
 }
 \references{

@@ -289,7 +289,6 @@ plot.tacvf <- function(x, type = "o", pch = 20, xlab = NULL, ylab = NULL, main =
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(34577)
 #' sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
 #' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=TRUE)
@@ -299,7 +298,6 @@ plot.tacvf <- function(x, type = "o", pch = 20, xlab = NULL, ylab = NULL, main =
 #' fit2
 #' fit3
 #' tacfplot(fits = list(fit1, fit2, fit3), maxlag = 30)
-#' }
 #'
 #' @export tacfplot
 tacfplot <- function(fits = list(), modes = "all", xlab = NULL, ylab = NULL, main = NULL,

@@ -4,7 +4,9 @@
 \name{tmpyr}
 \alias{tmpyr}
 \title{Temperature Data}
-\format{A ts tmpyr}
+\format{
+A ts tmpyr
+}
 \source{
 \url{http://www.metoffice.gov.uk/hadobs/hadcet/}
 }
@@ -32,7 +34,6 @@ modes to the surface.
 }
 \examples{
 
-\donttest{
 data(tmpyr)
 
 fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE, back=TRUE)
@@ -64,7 +65,6 @@ plot(tacvf(fit2), maxlag = 30, tacf = TRUE)
 plot(tacvf(fit1), maxlag = 30, tacf = TRUE)
 
 tacfplot(list(fit1, fit2))
-}
 
 }
 \references{

@@ -4,10 +4,20 @@
 \alias{predict.arfima}
 \title{Predicts from a fitted object.}
 \usage{
-\method{predict}{arfima}(object, n.ahead = 1, prop.use = "default",
-  newxreg = NULL, predint = 0.95, exact = c("default", T, F),
-  setmuhat0 = FALSE, cpus = 1, trend = NULL, n.use = NULL,
-  xreg = NULL, ...)
+\method{predict}{arfima}(
+  object,
+  n.ahead = 1,
+  prop.use = "default",
+  newxreg = NULL,
+  predint = 0.95,
+  exact = c("default", T, F),
+  setmuhat0 = FALSE,
+  cpus = 1,
+  trend = NULL,
+  n.use = NULL,
+  xreg = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{A fitted \code{arfima} object}
@@ -59,7 +69,6 @@ as possible.}
 }
 \examples{
 
-\donttest{
 set.seed(82365)
 sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
 fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
@@ -93,8 +102,6 @@ predXnew <- predict(fitX, n.ahead = n.fore, xreg = Xnew)
 predXnew
 plot(predXnew, numback=50)
 
-#
-}
 
 }
 \references{

@@ -4,8 +4,7 @@
 \alias{tacvf}
 \title{Extracts the tacvfs of a fitted object}
 \usage{
-tacvf(obj, xmaxlag = 0, forPred = FALSE, n.ahead = 0, nuse = -1,
-  ...)
+tacvf(obj, xmaxlag = 0, forPred = FALSE, n.ahead = 0, nuse = -1, ...)
 }
 \arguments{
 \item{obj}{An object of class "arfima" or "ARFIMA".  The latter class is a

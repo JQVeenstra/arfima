@@ -146,7 +146,6 @@
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 #' dfrac = 0.4, theta = 0.9))
@@ -170,7 +169,6 @@
 #'
 #' detach(SeriesJ)
 #'
-#' }
 #'
 #' @export arfima
 "arfima" <- function(z, order = c(0, 0, 0), numeach = c(1, 1), dmean = TRUE, whichopt = 0,
@@ -379,6 +377,10 @@
         warning("itmean trumps dmean: setting dmean to FALSE")
         dmean <- FALSE
     }
+    
+    mean.dof = if(itmean || (is.logical(dmean) && dmean)) 1 else 0
+    
+    if(!is.null(xreg)) mean.dof <- mean.dof + dim(xreg)[2]
 
     info <- NULL
     dint <- order[2]
@@ -620,9 +622,7 @@
         if(nchar(warnstring)>31) warning(warnstring)
 
         fixx <- c(fixx, sfixx, fracfix, sfracfix, rep(NA, sum(r)+sum(s)))
-        # if((sum(r)+sum(s)==0)&&dmean==T) {
-        #   fixx <- c(fixx, NA)
-        # }
+
         indfixx <- !is.na(fixx)
 
         if (is.logical(dmean) && dmean) {
@@ -713,8 +713,6 @@
     }
     D <- dint + dseas * period
 
-
-    ## Should this go before differencing?
     if (any(r > 0) && any(abs(colMeans(xreg)) > 1e-14)) {
         cat("Please note for transfer functions the means of each X variable must be 0: subtracting mean from each X\n")
         for (i in 1:ncol(xreg)) {
@@ -732,8 +730,6 @@
     }
 
     differencing <- if (D > 0) TRUE else FALSE
-
-
 
     if (is.logical(dmean) && !dmean && !straightRegress)
       meanval <- mean(y)
@@ -785,7 +781,7 @@
             allpars[[1]]$thetaseas, allpars[[1]]$dfrac, allpars[[1]]$H,
             allpars[[1]]$alpha, allpars[[1]]$dfs, allpars[[1]]$Hs,
             allpars[[1]]$alphas, allpars[[1]]$delta, allpars[[1]]$omega)
-        sigma2muse <- getsigma2muhat(y - allpars[[1]]$muHat)
+        sigma2muse <- getsigma2muhat(y - allpars[[1]]$muHat, mean.dof = mean.dof)
         allpars[[1]]$sigma2 <- sigma2muse
         rr <- tacvfARFIMA(maxlag = length(y) - 1)
         res <- DLResiduals(rr, y - allpars[[1]]$muHat)
@@ -799,11 +795,6 @@
                     call = match.call(), flag0 = flag0, numeach = numeach, strReg = F,
                     regOnly = regOnly, intindex = intindex, intname = intname, namexreg=namexreg,
                     fixx = fixx, indfixx = indfixx)
-        # ans <- list(z = z, differencing = differencing, dint = dint, dseas = dseas, period = period,
-        #     modes = allpars, dmean = dmean, itmean = itmean, p = p, q = q, pseas = pseas,
-        #     qseas = qseas, lmodel = lmodel, slmodel = slmodel, weeded = TRUE, getHess = getHess,
-        #     numvars = numvars, numcut = 0, n = length(z), xreg = xr, r = r, s = s, b = b,
-        #     call = match.call(), flag0 = flag0)
     } else {
       num <- if (!rand)
         numtries else numrand
@@ -1107,7 +1098,7 @@
                 se <- rep(-Inf, numvarsM)
                 se[!indfixxM] <- tryCatch(sqrt(diag(solve(-hess))),
                               error = function(err) rep(NA, max(dim(hess)[1], 1)))
-
+                
                 allpars[[i]]$se <- se
                 allpars[[i]]$hess <- hess
 
@@ -1193,7 +1184,8 @@
                 sigma2muse <- getsigma2muhat(resRdiff, phi = allpars[[i]]$phi, theta = allpars[[i]]$theta,
                                              thetaseas = allpars[[i]]$thetaseas, phiseas = allpars[[i]]$phiseas, period = period,
                                              dfrac = allpars[[i]]$dfrac, dfs = allpars[[i]]$dfs, H = allpars[[i]]$H,
-                                             Hs = allpars[[i]]$Hs, alpha = allpars[[i]]$alpha, alphas = allpars[[i]]$alphas)
+                                             Hs = allpars[[i]]$Hs, alpha = allpars[[i]]$alpha, alphas = allpars[[i]]$alphas, 
+                                             mean.dof = mean.dof)
                 allpars[[i]]$fitted <- resRdiff - res
 
             } else {
@@ -1203,13 +1195,26 @@
                 sigma2muse <- getsigma2muhat(yy, phi = allpars[[i]]$phi, theta = allpars[[i]]$theta,
                   thetaseas = allpars[[i]]$thetaseas, phiseas = allpars[[i]]$phiseas, period = period,
                   dfrac = allpars[[i]]$dfrac, dfs = allpars[[i]]$dfs, H = allpars[[i]]$H,
-                  Hs = allpars[[i]]$Hs, alpha = allpars[[i]]$alpha, alphas = allpars[[i]]$alphas)
+                  Hs = allpars[[i]]$Hs, alpha = allpars[[i]]$alpha, alphas = allpars[[i]]$alphas, 
+                  mean.dof = mean.dof)
                 res <- DLResiduals(rr, yy)
                 allpars[[i]]$fitted <- yy - res
             }
             allpars[[i]]$regResiduals <- resR
             allpars[[i]]$residuals <- res
             allpars[[i]]$sigma2 <- sigma2muse
+            
+            if (getHess && !is.null(xreg) && sum(s) > 0) {
+              inds <- p + q + pseas + qseas + length(allpars[[i]]$dfrac) + length(allpars[[i]]$H) +
+                length(allpars[[i]]$dfs) + length(allpars[[i]]$Hs) + length(allpars[[i]]$alpha) +
+                length(allpars[[i]]$alphas) + sum(r) + 1:(sum(s) + 1)
+              
+              XX <- cbind(xreg, rep(1, length(z)))
+              XXi <- solve(t(XX)%*% XX)
+              V <- toeplitz(rr)
+              covTS <- XXi %*% t(XX) %*% V %*% XX %*% XXi
+              allpars[[i]]$se[inds] <- sqrt(diag(sigma2muse*covTS))
+            }
 
             class(allpars[[i]]) <- "ARFIMA"
         }
@@ -1274,7 +1279,6 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(theta = 0.9, dfrac = 0.4))
 #' fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE, back=TRUE)
@@ -1283,7 +1287,6 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' fit1 <- weed(fit)
 #' fit1
 #' distance(fit1)
-#' }
 #'
 #' @export weed
 weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025, eps3 = 0.01,
@@ -1498,7 +1501,6 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -1506,7 +1508,6 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
 #' fit
 #'
 #' distance(fit)
-#' }
 #'
 #' @export distance
 distance <- function(ans, p = 2, digits = 4) {
@@ -1539,9 +1540,6 @@ distance <- function(ans, p = 2, digits = 4) {
 }
 
 
-
-
-
 #' Finds the best modes of an \code{arfima} fit.
 #'
 #' Finds the best modes of an \code{arfima} fit with respect to log-likelihood.
@@ -1557,14 +1555,12 @@ distance <- function(ans, p = 2, digits = 4) {
 #' @keywords ts
 #' @examples
 #'
-#' \donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
 #' fit <- arfima(sim, order = c(1, 0, 1), back=TRUE)
 #' fit
 #' fit <- bestModes(fit, 2)
 #' fit
-#' }
 #'
 #' @export bestModes
 bestModes <- function(object, bestn) {
