@@ -26,6 +26,7 @@ Computes information criteria for \code{arfima} objects.  See
 }
 \examples{
 
+\donttest{
 set.seed(34577)
 sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
 fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=TRUE)
@@ -35,7 +36,7 @@ fit3 <- arfima(sim, order = c(1, 0, 1), cpus = 2, lmodel = "h", back=TRUE)
 AIC(fit1)
 AIC(fit2)
 AIC(fit3)
-
+}
 }
 \author{
 JQ (Justin) Veenstra

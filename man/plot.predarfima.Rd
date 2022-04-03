@@ -50,7 +50,7 @@ orange: limiting PIs
 See \code{\link{predict.arfima}}.
 }
 \examples{
-
+\donttest{
 set.seed(82365)
 sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
 fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
@@ -60,7 +60,7 @@ pred
 plot(pred)
 #Let's look at more context
 plot(pred, numback = 50)
-
+}
 }
 \references{
 Veenstra, J.Q. Persistence and Antipersistence:  Theory and

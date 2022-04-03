@@ -41,6 +41,7 @@
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(82365)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, theta=0.9, dint = 1))
 #' fit <- arfima(sim, order = c(0, 1, 1), back=TRUE)
@@ -73,7 +74,7 @@
 #' predXnew <- predict(fitX, n.ahead = n.fore, xreg = Xnew)
 #' predXnew
 #' plot(predXnew, numback=50)
-#'
+#'}
 #'
 predict.arfima <- function(
   object, n.ahead = 1, prop.use = "default", newxreg = NULL, predint = 0.95,

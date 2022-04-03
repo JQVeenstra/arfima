@@ -24,7 +24,7 @@ specifications r = 2, s = 2, and b = 3, regressing on XJ.  Our package
 agrees with their results.
 }
 \examples{
-
+\donttest{
 data(SeriesJ)
 attach(SeriesJ)
 
@@ -34,7 +34,7 @@ fitTF ## agrees fairly closely with Box et. al.
 
 
 detach(SeriesJ)
-
+}
 }
 \references{
 Box, G. E. P., Jenkins, G. M., and Reinsel, G. C. (2008) Time

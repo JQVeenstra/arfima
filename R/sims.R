@@ -112,7 +112,7 @@ arfima.sim <- function(n, model = list(phi = numeric(0), theta = numeric(0), din
         dint = 0, period = numeric(0), dfrac = numeric(0), H = numeric(0), alpha = numeric(0))),
     useC = 3, sigma2 = 1, rand.gen = rnorm, muHat = 0, zinit = NULL, innov = NULL, ...) {
 
-    if(class(model)=='arfima') {
+    if(inherits(model, 'arfima')) {
       warning('Model was of class arfima, using the function sim_from_fitted')
       return(sim_from_fitted(n, model))
     }
@@ -276,6 +276,7 @@ arfima.sim <- function(n, model = list(phi = numeric(0), theta = numeric(0), din
 #' @keywords fit ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(6533)
 #' sim <- arfima.sim(1000, model = list(phi = .2, dfrac = .3, dint = 2))
 #'
@@ -324,11 +325,12 @@ arfima.sim <- function(n, model = list(phi = numeric(0), theta = numeric(0), din
 #' fit_X3
 #' fit_X4 <- arfima(from_series_X[[4]], order=c(1, 0, 0), xreg=Xnew)
 #' fit_X4
+#' }
 #' 
 #' @export sim_from_fitted
 sim_from_fitted <- function(n, model, X = NULL, seed = NULL) {
   
-  if(class(model)!='arfima') {
+  if(!inherits(model, 'arfima')) {
     stop("Cannot use this function with any other input than a fitted arfima function")
   }
   

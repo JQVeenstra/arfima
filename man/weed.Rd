@@ -45,6 +45,7 @@ Weeds out fits from a call to arfima that are too close to each other.
 }
 \examples{
 
+\donttest{
 set.seed(1234)
 sim <- arfima.sim(1000, model = list(theta = 0.9, dfrac = 0.4))
 fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE, back=TRUE)
@@ -53,7 +54,7 @@ distance(fit)
 fit1 <- weed(fit)
 fit1
 distance(fit1)
-
+}
 }
 \seealso{
 \code{\link{arfima}}, \code{\link{distance}}

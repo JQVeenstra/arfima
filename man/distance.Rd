@@ -22,6 +22,7 @@ The distance between modes of an \code{arfima} fit.
 }
 \examples{
 
+\donttest{
 set.seed(8564)
 sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -29,7 +30,7 @@ fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 fit
 
 distance(fit)
-
+}
 }
 \references{
 Veenstra, J.Q. Persistence and Antipersistence:  Theory and

@@ -198,6 +198,7 @@ the log-likelihood; and a "3" means C is used to compute everything.
 }
 \examples{
 
+\donttest{
 set.seed(8564)
 sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 dfrac = 0.4, theta = 0.9))
@@ -220,7 +221,7 @@ list(regpar = c(2, 2, 3)), lmodel = "n")
 fitTF
 
 detach(SeriesJ)
-
+}
 
 }
 \references{

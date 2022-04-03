@@ -11,14 +11,14 @@
 #' @seealso \code{\link{arfima}}
 #' @keywords ts
 #' @examples
-#'
+#'\donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
 #' fit <- arfima(sim, order = c(1, 0, 1), back=TRUE)
 #' fit
 #' fit <- removeMode(fit, 3)
 #' fit
-#'
+#'}
 #' @export removeMode
 removeMode <- function(object, num) {
     if (!object$weeded)
@@ -242,7 +242,8 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 #' Software (PhD Thesis)
 #' @keywords ts
 #' @examples
-#'
+#' 
+#'\donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -256,7 +257,7 @@ print.arfima <- function(x, digits = max(6, getOption("digits") - 3), ...) {
 #' plot(fitted[[2]], resid[[2]])
 #' plot(fitted[[3]], resid[[3]])
 #' par(mfrow = c(1, 1))
-#'
+#'}
 fitted.arfima <- function(object, ...) {
 
     if (!object$weeded) {
@@ -296,6 +297,7 @@ fitted.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -312,6 +314,7 @@ fitted.arfima <- function(object, ...) {
 #' plot(fitted[[2]], resid[[2]])
 #' plot(fitted[[3]], resid[[3]])
 #' par(mfrow = c(1, 1))
+#'}
 #'
 residuals.arfima <- resid.arfima <- function(object, reg = FALSE, ...) {
 
@@ -493,7 +496,7 @@ print.summary.arfima <- function(x, digits = max(6, getOption("digits") - 3), si
 
 InfoMatrix <- function(object, digits = max(6, getOption("digits") - 3), tapprox = FALSE,
     ...) {
-    if (class(object) != "arfima")
+    if (!inherits(object, "arfima"))
         stop("only arfima objects can be passed to this function")
     if (!object$weeded) {
         warning("The object has not been weeded:  there may be duplicate modes, as well as excessive output. \n For more sensible output, please call weed() on the object")
@@ -575,13 +578,14 @@ logLik.arfima <- function(object, ...) {
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
 #'
 #' fit
 #' coef(fit)
-#'
+#'}
 coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits") - 3),
     ...) {
     if (!object$weeded) {
@@ -724,6 +728,7 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(34577)
 #' sim <- arfima.sim(500, model = list(theta = 0.9, phi = 0.5, dfrac = 0.4))
 #' fit1 <- arfima(sim, order = c(1, 0, 1), cpus = 2, back=TRUE)
@@ -733,7 +738,7 @@ coef.arfima <- function(object, tpacf = FALSE, digits = max(4, getOption("digits
 #' AIC(fit1)
 #' AIC(fit2)
 #' AIC(fit3)
-#'
+#'}
 AIC.arfima <- function(object, ..., k = 2) {
     if (!object$weeded) {
         warning("The object has not been weeded:  there may be duplicate modes, as well as excessive output. \n For more sensible output, please call weed() on the object")
@@ -783,7 +788,7 @@ BIC.arfima <- function(object, ...) {
 #' Software (PhD Thesis)
 #' @keywords ts
 #' @examples
-#'
+#'\donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(dfrac = 0.4, phi = .8, theta = -0.5))
 #' fit1 <- arfima(sim, order = c(1, 0, 1), back=TRUE)
@@ -795,7 +800,7 @@ BIC.arfima <- function(object, ...) {
 #' vcov(fit1)
 #' vcov(fit2)
 #' vcov(fit2)
-#'
+#'}
 vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = max(4, getOption("digits") -
     3), tapprox = FALSE, summ = FALSE, ...) {
     if (!object$weeded) {
@@ -897,7 +902,7 @@ vcov.arfima <- function(object, type = c("b", "o", "e"), cor = FALSE, digits = m
 
 getnames <- function(ans) {
 
-    if (class(ans) != "arfima")
+    if (!inherits(ans, "arfima"))
         stop("the getnames function only works for arfima objects")
 
     nm <- colnames(coef(weed(ans)))

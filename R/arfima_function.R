@@ -146,6 +146,7 @@
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1),
 #' dfrac = 0.4, theta = 0.9))
@@ -168,7 +169,7 @@
 #' fitTF
 #'
 #' detach(SeriesJ)
-#'
+#'}
 #'
 #' @export arfima
 "arfima" <- function(z, order = c(0, 0, 0), numeach = c(1, 1), dmean = TRUE, whichopt = 0,
@@ -1279,6 +1280,7 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(1234)
 #' sim <- arfima.sim(1000, model = list(theta = 0.9, dfrac = 0.4))
 #' fit <- arfima(sim, order = c(0, 0, 1), autoweed = FALSE, back=TRUE)
@@ -1287,11 +1289,11 @@ pcircle <- function(x1, x2, rad, pn = 2) {
 #' fit1 <- weed(fit)
 #' fit1
 #' distance(fit1)
-#'
+#'}
 #' @export weed
 weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025, eps3 = 0.01,
     adapt = TRUE, pn = 2) {
-    if (class(ans) != "arfima")
+    if (!inherits(ans, "arfima"))
         stop("weed only defined for arfima objects")
 
     allpars <- ans$modes
@@ -1501,6 +1503,7 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(8564)
 #' sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 #' fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -1508,10 +1511,10 @@ weed <- function(ans, type = c("A", "P", "B", "N"), walls = FALSE, eps2 = 0.025,
 #' fit
 #'
 #' distance(fit)
-#'
+#'}
 #' @export distance
 distance <- function(ans, p = 2, digits = 4) {
-    if (class(ans) != "arfima")
+    if (!inherits(ans, "arfima"))
         stop("distance only defined for arfima objects")
     if (p <= 0)
         stop("invalid p")
@@ -1555,17 +1558,18 @@ distance <- function(ans, p = 2, digits = 4) {
 #' @keywords ts
 #' @examples
 #'
+#'\donttest{
 #' set.seed(8765)
 #' sim <- arfima.sim(1000, model = list(phi = 0.4, theta = 0.9, dfrac = 0.4))
 #' fit <- arfima(sim, order = c(1, 0, 1), back=TRUE)
 #' fit
 #' fit <- bestModes(fit, 2)
 #' fit
-#'
+#'}
 #' @export bestModes
 bestModes <- function(object, bestn) {
 
-    if (class(object) != "arfima")
+    if (!inherits(object, "arfima"))
         stop("bestModes only defined for arfima objects")
     if (!object$weeded)
         stop("Please weed the object first before calling bestModes.")

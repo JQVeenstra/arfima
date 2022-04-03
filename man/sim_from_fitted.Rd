@@ -49,6 +49,7 @@ with the innovations to generate a series as in McLeod et. al. (2007).
 }
 \examples{
 
+\donttest{
 set.seed(6533)
 sim <- arfima.sim(1000, model = list(phi = .2, dfrac = .3, dint = 2))
 
@@ -97,6 +98,7 @@ fit_X3 <- arfima(from_series_X[[3]], order=c(1, 0, 0), xreg=Xnew)
 fit_X3
 fit_X4 <- arfima(from_series_X[[4]], order=c(1, 0, 0), xreg=Xnew)
 fit_X4
+}
 
 }
 \references{

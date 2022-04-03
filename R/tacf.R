@@ -34,7 +34,7 @@ mix <- function(x, y) {
 tacvf <- function(obj, xmaxlag = 0, forPred = FALSE, n.ahead = 0, nuse = -1,...) {
     if (xmaxlag < 0)
         stop("xmaxlag must be >= 0")
-    if (class(obj) == "arfima") {
+    if (inherits(obj, "arfima")) {
         if (!obj$weeded) {
             warning("The object has not been weeded:  there may be duplicate modes, as well as excessive output. \n For more sensible output, please call weed() on the object")
         }
@@ -81,7 +81,7 @@ tacvf <- function(obj, xmaxlag = 0, forPred = FALSE, n.ahead = 0, nuse = -1,...)
                 }
             }
         }
-    } else if (class(obj) == "ARFIMA") {
+    } else if (inherits(obj, "ARFIMA")) {
         name <- deparse(substitute(obj))
         phi <- obj$phi
         theta <- obj$theta
@@ -310,7 +310,7 @@ tacfplot <- function(fits = list(), modes = "all", xlab = NULL, ylab = NULL, mai
         stop("for a single fit, only the fit should be provided: recommended to use plot.tacvf with tacf = TRUE")
     }
 
-    if (class(fits) == "arfima") {
+    if (inherits(fits, "arfima")) {
         if (modes != "all") {
             warning("only one fit provided and modes != 'all':  using all modes")
         }

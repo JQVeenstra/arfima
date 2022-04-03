@@ -8,7 +8,7 @@
 A ts tmpyr
 }
 \source{
-\url{http://www.metoffice.gov.uk/hadobs/hadcet/}
+\url{https://hadleyserver.metoffice.gov.uk/hadobs/hadcet/}
 }
 \description{
 Central England mean yearly temperatures from 1659 to 1976
@@ -34,6 +34,7 @@ modes to the surface.
 }
 \examples{
 
+\donttest{
 data(tmpyr)
 
 fit <- arfima(tmpyr, order = c(1, 0, 1), numeach = c(3, 3), dmean = TRUE, back=TRUE)
@@ -65,7 +66,7 @@ plot(tacvf(fit2), maxlag = 30, tacf = TRUE)
 plot(tacvf(fit1), maxlag = 30, tacf = TRUE)
 
 tacfplot(list(fit1, fit2))
-
+}
 }
 \references{
 Parker, D.E., Legg, T.P., and Folland, C.K. (1992).  A new daily

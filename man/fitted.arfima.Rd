@@ -19,6 +19,7 @@ Extract fitted values from an \code{arfima} object.
 }
 \examples{
 
+\donttest{
 set.seed(8564)
 sim <- arfima.sim(1000, model = list(phi = c(0.2, 0.1), dfrac = 0.4, theta = 0.9))
 fit <- arfima(sim, order = c(2, 0, 1), back=TRUE)
@@ -32,7 +33,7 @@ plot(fitted[[1]], resid[[1]])
 plot(fitted[[2]], resid[[2]])
 plot(fitted[[3]], resid[[3]])
 par(mfrow = c(1, 1))
-
+}
 }
 \references{
 Veenstra, J.Q. Persistence and Antipersistence:  Theory and
