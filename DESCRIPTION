@@ -1,6 +1,6 @@
 Package: arfima
 Title: Fractional ARIMA (and Other Long Memory) Time Series Modeling
-Version: 1.8-0
+Version: 1.8-1
 Date: 2022-04-03
 Author: JQ (Justin) Veenstra [aut, cre], A.I. McLeod [aut]
 Maintainer: JQ Veenstra <jqveenstra@gmail.com>

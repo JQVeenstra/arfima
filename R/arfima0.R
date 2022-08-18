@@ -42,7 +42,7 @@ arfima0 <- function(z, order = c(0, 0, 0), lmodel = c("FD", "FGN", "PLA", "NONE"
     Entropy <- function(beta, p, q) {
         alpha <- beta[1]
         phi <- theta <- numeric(0)
-        if (alpha <= 0 || alpha >= 2 || (p > 0 || q > 0) && abs(beta[-1]) >= 1) 
+        if (alpha <= 0 || alpha >= 2 || (p > 0 || q > 0) && any(abs(beta[-1]) >= 1)) 
             LL <- -penaltyLoglikelihood else {
             if (p > 0) 
                 phi <- PacfToAR(beta[2:(p + 1)])
