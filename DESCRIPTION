@@ -12,8 +12,7 @@ Description: Simulates, fits, and predicts long-memory and anti-persistent
 	time series, possibly mixed with ARMA, regression, transfer-function
 	components.
 	Exact methods (MLE, forecasting, simulation) are used.
-	Bug reports should be done via GitHub (at
-	<https://github.com/JQVeenstra/arfima>), where the development version
-	of this package lives; it can be installed using devtools.
 License: MIT + file LICENSE
 RoxygenNote: 7.1.2
+URL: https://github.com/JQVeenstra/arfima
+BugReports: https://github.com/JQVeenstra/arfima/issues
